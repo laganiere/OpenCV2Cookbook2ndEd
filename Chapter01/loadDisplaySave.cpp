@@ -79,6 +79,27 @@ void main() {
 
 	cv::imwrite("output.bmp", result); // save result
 
+	// create another image window named
+	cv::namedWindow("Drawing on an Image"); // define the window
+
+	cv::circle(image,              // destination image 
+		       cv::Point(155,110), // center coordinate
+			   65,                 // radius  
+			   0,                  // color (here black)
+			   3);                 // thickness
+
+	cv::putText(image,                   // destination image
+		        "This is a dog.",        // text
+				cv::Point(40,200),       // text position
+				cv::FONT_HERSHEY_PLAIN,  // font type
+				2.0,                     // font scale
+				255,                     // text color (here white)
+				2);                      // text thickness
+
+	cv::imshow("Drawing on an Image", image); // show the image
+
+	cv::waitKey(0); // 0 to indefinitely wait for a key pressed
+
 	return;
 }
 

@@ -32,7 +32,12 @@ cv::Mat function() {
 
 void main() {
 
-	// define an image window
+	// define image windows
+	cv::namedWindow("Image 1"); 
+	cv::namedWindow("Image 2"); 
+	cv::namedWindow("Image 3"); 
+	cv::namedWindow("Image 4"); 
+	cv::namedWindow("Image 5"); 
 	cv::namedWindow("Image"); 
 
 	// create a new image made of 240 rows and 320 columns
@@ -76,16 +81,12 @@ void main() {
 	// transform the image for testing
 	cv::flip(image3,image3,1); 
 
-	// check which image has been affected by the processing
-	cv::imshow("Image", image3); // show the image
-	cv::waitKey(0); // wait for a key pressed
-	cv::imshow("Image", image1); // show the image
-	cv::waitKey(0); // wait for a key pressed
-	cv::imshow("Image", image2); // show the image
-	cv::waitKey(0); // wait for a key pressed
-	cv::imshow("Image", image4); // show the image
-	cv::waitKey(0); // wait for a key pressed
-	cv::imshow("Image", image5); // show the image
+	// check which images have been affected by the processing
+	cv::imshow("Image 3", image3); 
+	cv::imshow("Image 1", image1); 
+	cv::imshow("Image 2", image2); 
+	cv::imshow("Image 4", image4); 
+	cv::imshow("Image 5", image5); 
 	cv::waitKey(0); // wait for a key pressed
 
     // get a gray-level image from a function
