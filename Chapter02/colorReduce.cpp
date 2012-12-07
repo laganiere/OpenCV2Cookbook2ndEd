@@ -36,12 +36,12 @@ void colorReduce0(cv::Mat &image, int div=64) {
           for (int i=0; i<nc; i++) {
  
             // process each pixel ---------------------
-                 
-                  data[i]= data[i]/div*div + div/2;
+
+				data[i]= data[i]/div*div + div/2;
  
             // end of pixel processing ----------------
  
-            } // end of line                   
+          } // end of line                   
       }
 }
 
@@ -83,8 +83,9 @@ void colorReduce2(cv::Mat &image, int div=64) {
  
             // process each pixel ---------------------
        
-			      int v= *data;
-                  *data++= v - v%div + div/2;
+			     int v= *data;
+                 *data++= v - v%div + div/2;
+//                 *data++= *data - *data%div + div/2;
  
             // end of pixel processing ----------------
  
@@ -101,6 +102,7 @@ void colorReduce3(cv::Mat &image, uchar div=64) {
 	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
 	  // mask used to round the pixel value
 	  uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
+	  uchar div2= div>>1;
               
       for (int j=0; j<nl; j++) {
 
@@ -111,7 +113,7 @@ void colorReduce3(cv::Mat &image, uchar div=64) {
             // process each pixel ---------------------
        
 			*data &= mask;     // masking
-			*data++ += div>>1; // add div/2
+			*data++ += div2;   // add div/2
 
             // end of pixel processing ----------------
  
@@ -186,6 +188,7 @@ void colorReduce6(cv::Mat &image, int div=64) {
 
 	  if (image.isContinuous())  {
 		  // then no padded pixels
+		  std::cout << "Image is continuous" << std::endl;
 		  nc= nc*nl; 
 		  nl= 1;  // it is now a 1D array
 	   }
@@ -562,21 +565,21 @@ int main()
 
 	// print average execution time
 	std::cout << std::endl << "-------------------------------------------" << std::endl << std::endl;
-	std::cout << "using .ptr and [] =" << 1000.*t[0]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ =" << 1000.*t[1]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ and modulo =" << 1000.*t[2]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ and bitwise =" << 1000.*t[3]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using direct pointer arithmetic =" << 1000.*t[4]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ and bitwise with image.cols * image.channels() =" << 1000.*t[5]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ and bitwise (continuous) =" << 1000.*t[6]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using .ptr and * ++ and bitwise (continuous+reshape) =" << 1000.*t[7]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using Mat_ iterator =" << 1000.*t[8]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using Mat_ iterator and bitwise =" << 1000.*t[9]/cv::getTickFrequency()/n << "ms" << std::endl;
-	std::cout << "using MatIterator_ =" << 1000.*t[10]/cv::getTickFrequency()/n << "ms" << std::endl;	
-	std::cout << "using at =" << 1000.*t[11]/cv::getTickFrequency()/n << "ms" << std::endl;	
-	std::cout << "using input/output images =" << 1000.*t[12]/cv::getTickFrequency()/n << "ms" << std::endl;	
-	std::cout << "using overloaded operators =" << 1000.*t[13]/cv::getTickFrequency()/n << "ms" << std::endl;	
-	std::cout << "using lookup table =" << 1000.*t[14]/cv::getTickFrequency()/n << "ms" << std::endl;	
+	std::cout << "0. using .ptr and [] =" << 1000.*t[0]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "1. using .ptr and * ++ =" << 1000.*t[1]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "2. using .ptr and * ++ and modulo =" << 1000.*t[2]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "3. using .ptr and * ++ and bitwise =" << 1000.*t[3]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "4. using direct pointer arithmetic =" << 1000.*t[4]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "5. using .ptr and * ++ and bitwise with image.cols * image.channels() =" << 1000.*t[5]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "6. using .ptr and * ++ and bitwise (continuous) =" << 1000.*t[6]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "7. using .ptr and * ++ and bitwise (continuous+reshape) =" << 1000.*t[7]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "8. using Mat_ iterator =" << 1000.*t[8]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "9. using Mat_ iterator and bitwise =" << 1000.*t[9]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "10. using MatIterator_ =" << 1000.*t[10]/cv::getTickFrequency()/n << "ms" << std::endl;	
+	std::cout << "11. using at =" << 1000.*t[11]/cv::getTickFrequency()/n << "ms" << std::endl;	
+	std::cout << "12. using input/output images =" << 1000.*t[12]/cv::getTickFrequency()/n << "ms" << std::endl;	
+	std::cout << "13. using overloaded operators =" << 1000.*t[13]/cv::getTickFrequency()/n << "ms" << std::endl;	
+	std::cout << "14. using lookup table =" << 1000.*t[14]/cv::getTickFrequency()/n << "ms" << std::endl;	
 	
 	cv::waitKey();
 	return 0;
