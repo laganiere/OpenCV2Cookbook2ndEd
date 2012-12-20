@@ -44,7 +44,7 @@ class ColorDetector {
 		  target[0]= target[1]= target[2]= 0;
 	  }
 
-	  // other constructor
+	  // full constructor
 	  ColorDetector(uchar blue, uchar green, uchar red, int minDist=100): minDist(minDist) { 
 
 		  // target color
