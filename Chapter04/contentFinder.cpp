@@ -97,54 +97,51 @@ int main()
 	finder.setHistogram(shist);
 	finder.setThreshold(0.05f);
 
-	// Get back-projection of colour histogram
+	// Get back-projection of color histogram
 	result1= finder.find(color);
 
 	cv::namedWindow("Color Detection Result");
 	cv::imshow("Color Detection Result",result1);
-/*
-	// Second colour image
-	cv::Mat colour2= cv::imread("../dog.jpg");
-	colour2= hc.colorReduce(colour2,32);
 
-	// Get back-projection of colour histogram
-	result2= finder.find(colour2);
+	// Second color image
+	cv::Mat color2= cv::imread("dog.jpg");
+	color2= hc.colorReduce(color2,32);
 
-	cv::namedWindow("Result colour (2)");
-	cv::imshow("Result colour (2)",result2);
+	cv::namedWindow("Second Image");
+	cv::imshow("Second Image",color2);
 
-	// Get ab colour histogram
-	colour= cv::imread("../waves.jpg");
-	imageROI= colour(cv::Rect(0,0,165,75)); // blue sky area
-	cv::Mat colourhist= hc.getabHistogram(imageROI);
+	// Get back-projection of color histogram
+	cv::Mat result2= finder.find(color2);
 
-	finder.setHistogram(colourhist);
-	finder.setThreshold(0.05f);
+	cv::namedWindow("Result color (2)");
+	cv::imshow("Result color (2)",result2);
+
+	// Get ab color histogram
+	imageROI= color(cv::Rect(0,0,165,75)); // blue sky area
+	cv::Mat colorhist= hc.getabHistogram(imageROI);
+
+	finder.setHistogram(colorhist);
+	finder.setThreshold(-1);//0.05f);
 
 	// Convert to Lab space
 	cv::Mat lab;
-	cv::cvtColor(colour, lab, CV_BGR2Lab);
+	cv::cvtColor(color, lab, CV_BGR2Lab);
 
 	// Get back-projection of ab histogram
 	int ch[2]={1,2};
-	result1= finder.find(lab,-128.0f,127.0f,ch,2);
+	result1= finder.find(lab,-128.0f,127.0f,ch);
 
 	cv::namedWindow("Result ab (1)");
 	cv::imshow("Result ab (1)",result1);
 
 	// Second colour image
-	colour2= cv::imread("../dog.jpg");
+	cv::cvtColor(color2, lab, CV_BGR2Lab);
 
-	cv::namedWindow("Colour Image (2)");
-	cv::imshow("Colour Image (2)",colour2);
-
-	cv::cvtColor(colour2, lab, CV_BGR2Lab);
-
-	result2= finder.find(lab,-128.0f,127.0f,ch,2);
+	result2= finder.find(lab,-128.0f,127.0f,ch);
 
 	cv::namedWindow("Result ab (2)");
 	cv::imshow("Result ab (2)",result2);
-
+	/*
 	// Get Hue colour histogram
 	colour= cv::imread("waves.jpg");
 	imageROI= colour(cv::Rect(0,0,165,75)); // blue sky area

@@ -115,6 +115,13 @@ class Histogram1D {
 		// Compute histogram first
 		cv::Mat hist= getHistogram(image);
 
+		// Creates image
+		return getImageOfHistogram(hist);
+	}
+
+	// Create an image representing a histogram
+	cv::Mat getImageOfHistogram(const cv::Mat &hist) {
+
 		// Get min and max bin values
 		double maxVal=0;
 		double minVal=0;

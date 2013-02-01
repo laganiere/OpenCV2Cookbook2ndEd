@@ -20,16 +20,17 @@
 #include <vector>
 using namespace std;
 
-#include "cv.h"
-#include "highgui.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/tracking.hpp>
 
-#include "objectFinder.h"
-#include "colourhistogram.h"
+#include "contentFinder.h"
+#include "colorhistogram.h"
 
 int main()
 {
 	// Read reference image
-	cv::Mat image= cv::imread("../baboon1.jpg");
+	cv::Mat image= cv::imread("baboon1.jpg");
 	if (!image.data)
 		return 0; 
 
@@ -43,14 +44,14 @@ int main()
 
 	// Get the Hue histogram
 	int minSat=65;
-	ColourHistogram hc;
-	cv::MatND colourhist= hc.getHueHistogram(imageROI,minSat);
+	ColorHistogram hc;
+	cv::Mat colorhist= hc.getHueHistogram(imageROI,minSat);
 
-	ObjectFinder finder;
-	finder.setHistogram(colourhist);
+	ContentFinder finder;
+	finder.setHistogram(colorhist);
 	finder.setThreshold(0.2f);
 
-	// Convert to HSV space
+	// Convert to HSV space (just for display)
 	cv::Mat hsv;
 	cv::cvtColor(image, hsv, CV_BGR2HSV);
 
@@ -60,22 +61,12 @@ int main()
 
 	// Eliminate pixels with low saturation
 	cv::threshold(v[1],v[1],minSat,255,cv::THRESH_BINARY);
-	cv::namedWindow("Saturation");
-	cv::imshow("Saturation",v[1]);
+	cv::namedWindow("Saturation mask");
+	cv::imshow("Saturation mask",v[1]);
 
-	// Get back-projection of hue histogram
-	int ch[1]={0};
-	cv::Mat result= finder.find(hsv,0.0f,180.0f,ch,1);
-
-	cv::namedWindow("Result Hue");
-	cv::imshow("Result Hue",result);
-
-	cv::bitwise_and(result,v[1],result);
-	cv::namedWindow("Result Hue and");
-	cv::imshow("Result Hue and",result);
-
+	//--------------
 	// Second image
-	image= cv::imread("../baboon3.jpg");
+	image= cv::imread("baboon3.jpg");
 
 	// Display image
 	cv::namedWindow("Image 2");
@@ -84,38 +75,20 @@ int main()
 	// Convert to HSV space
 	cv::cvtColor(image, hsv, CV_BGR2HSV);
 
-	// Split the image
-	cv::split(hsv,v);
-
-	// Eliminate pixels with low saturation
-	cv::threshold(v[1],v[1],minSat,255,cv::THRESH_BINARY);
-	cv::namedWindow("Saturation");
-	cv::imshow("Saturation",v[1]);
-
 	// Get back-projection of hue histogram
-	result= finder.find(hsv,0.0f,180.0f,ch,1);
+	int ch[1]={0};
+	finder.setThreshold(-1.0f); // no thresholding
+	cv::Mat result= finder.find(hsv,0.0f,180.0f,ch);
 
-	cv::namedWindow("Result Hue");
-	cv::imshow("Result Hue",result);
-
-	// Eliminate low stauration pixels
-	cv::bitwise_and(result,v[1],result);
-	cv::namedWindow("Result Hue and");
-	cv::imshow("Result Hue and",result);
-
-	// Get back-projection of hue histogram
-	finder.setThreshold(-1.0f);
-	result= finder.find(hsv,0.0f,180.0f,ch,1);
-	cv::bitwise_and(result,v[1],result);
-	cv::namedWindow("Result Hue and raw");
-	cv::imshow("Result Hue and raw",result);
-
+	// initial window position
 	cv::Rect rect(110,260,35,40);
 	cv::rectangle(image, rect, cv::Scalar(0,0,255));
 
+	// search objet with mean shift
 	cv::TermCriteria criteria(cv::TermCriteria::MAX_ITER,10,0.01);
 	cout << "meanshift= " << cv::meanShift(result,rect,criteria) << endl;
 
+	// draw output window
 	cv::rectangle(image, rect, cv::Scalar(0,255,0));
 
 	// Display image
@@ -124,4 +97,4 @@ int main()
 
 	cv::waitKey();
 	return 0;
-}
+}	

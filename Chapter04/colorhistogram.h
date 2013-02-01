@@ -106,10 +106,10 @@ class ColorHistogram {
 	// Computes the 1D Hue histogram with a mask.
 	// BGR source image is converted to HSV
 	// Pixels with low saturation are ignored
-	cv::MatND getHueHistogram(const cv::Mat &image, 
+	cv::Mat getHueHistogram(const cv::Mat &image, 
                              int minSaturation=0) {
 
-		cv::MatND hist;
+		cv::Mat hist;
 
 		// Convert to HSV colour space
 		cv::Mat hsv;
@@ -130,9 +130,9 @@ class ColorHistogram {
 		}
 
 		// Prepare arguments for a 1D hue histogram
-		hranges[0]= 0.0;
+		hranges[0]= 0.0;    // range is from 0 to 180
 		hranges[1]= 180.0;
-		channels[0]= 0; // the hue channel 
+		channels[0]= 0;    // the hue channel 
 
 		// Compute histogram
 		cv::calcHist(&hsv, 
