@@ -38,8 +38,8 @@ class Histogram1D {
 
 		// Prepare default arguments for 1D histogram
 		histSize[0]= 256;   // 256 bins
-		hranges[0]= 0.0;    // from 0 
-		hranges[1]= 255.0;  // to 255
+		hranges[0]= 0.0;    // from 0 (inclusive)
+		hranges[1]= 256.0;  // to 256 (exclusive)
 		ranges[0]= hranges; 
 		channels[0]= 0;     // we look at channel 0
 	}
@@ -58,7 +58,7 @@ class Histogram1D {
 	}
 
 	// Sets the range for the pixel values.
-	// By default it is [0,255]
+	// By default it is [0,256[
 	void setRange(float minValue, float maxValue) {
 
 		hranges[0]= minValue;
@@ -110,17 +110,17 @@ class Histogram1D {
 	}
 
 	// Computes the 1D histogram and returns an image of it.
-	cv::Mat getHistogramImage(const cv::Mat &image){
+	cv::Mat getHistogramImage(const cv::Mat &image, int zoom=1){
 
 		// Compute histogram first
 		cv::Mat hist= getHistogram(image);
 
 		// Creates image
-		return getImageOfHistogram(hist);
+		return getImageOfHistogram(hist, zoom);
 	}
 
 	// Create an image representing a histogram
-	cv::Mat getImageOfHistogram(const cv::Mat &hist) {
+	cv::Mat getImageOfHistogram(const cv::Mat &hist, int zoom=1) {
 
 		// Get min and max bin values
 		double maxVal=0;
@@ -128,7 +128,7 @@ class Histogram1D {
 		cv::minMaxLoc(hist, &minVal, &maxVal, 0, 0);
 
 		// Square image on which to display histogram
-		cv::Mat histImg(histSize[0], histSize[0], CV_8U,cv::Scalar(255));
+		cv::Mat histImg(histSize[0]*zoom, histSize[0]*zoom, CV_8U,cv::Scalar(255));
 
 		// set highest point at 90% of nbins (i.e. image height)
 		int hpt = static_cast<int>(0.9*histSize[0]);
@@ -137,8 +137,11 @@ class Histogram1D {
 		for( int h = 0; h < histSize[0]; h++ ) {
 
 			float binVal = hist.at<float>(h);
-			int intensity = static_cast<int>(binVal*hpt/maxVal);
-			cv::line(histImg,cv::Point(h,histSize[0]),cv::Point(h,histSize[0]-intensity),cv::Scalar(0));
+			if (binVal>0) {
+			  int intensity = static_cast<int>(binVal*hpt/maxVal);
+			  cv::line(histImg,cv::Point(h*zoom,histSize[0]*zoom),
+				  cv::Point(h*zoom,(histSize[0]-intensity)*zoom),cv::Scalar(0),zoom);
+			}
 		}
 
 		return histImg;

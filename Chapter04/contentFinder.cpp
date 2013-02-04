@@ -84,7 +84,7 @@ int main()
 	color= hc.colorReduce(color,32);
 
 	// Draw a rectangle around the reference area
-	// cv::rectangle(color,cv::Rect(0,0,165,75),cv::Scalar(0,0,0));
+	cv::rectangle(color,cv::Rect(0,0,165,75),cv::Scalar(0,0,0));
 
 	cv::namedWindow("Color Image");
 	cv::imshow("Color Image",color);
@@ -117,11 +117,15 @@ int main()
 	cv::imshow("Result color (2)",result2);
 
 	// Get ab color histogram
+	color= cv::imread("waves.jpg");
 	imageROI= color(cv::Rect(0,0,165,75)); // blue sky area
 	cv::Mat colorhist= hc.getabHistogram(imageROI);
 
+	cv::namedWindow("ab histogram");
+	cv::imshow("ab histogram",colorhist);
+
 	finder.setHistogram(colorhist);
-	finder.setThreshold(-1);//0.05f);
+	finder.setThreshold(0.05f);
 
 	// Convert to Lab space
 	cv::Mat lab;
@@ -129,7 +133,7 @@ int main()
 
 	// Get back-projection of ab histogram
 	int ch[2]={1,2};
-	result1= finder.find(lab,-128.0f,127.0f,ch);
+	result1= finder.find(lab,0,255.0f,ch);
 
 	cv::namedWindow("Result ab (1)");
 	cv::imshow("Result ab (1)",result1);

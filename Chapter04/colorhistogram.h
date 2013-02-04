@@ -35,17 +35,24 @@ class ColorHistogram {
 
 	ColorHistogram() {
 
-		// Prepare arguments for a color histogram
-		// each dimension having size of 256
+		// Prepare default arguments for a color histogram
+		// each dimension has equal size and range
 		histSize[0]= histSize[1]= histSize[2]= 256;
-		hranges[0]= 0.0;    // BRG range from 0 to 255
-		hranges[1]= 255.0;
+		hranges[0]= 0.0;    // BRG range from 0 to 256
+		hranges[1]= 256.0;
 		ranges[0]= hranges; // all channels have the same range 
 		ranges[1]= hranges; 
 		ranges[2]= hranges; 
 		channels[0]= 0;		// the three channels 
 		channels[1]= 1; 
 		channels[2]= 2; 
+	}
+
+	// set histogram size for each dimension
+	void setSize(int size) {
+
+		// each dimension has equal size 
+		histSize[0]= histSize[1]= histSize[2]= size;
 	}
 
 	// Computes the histogram.
@@ -55,7 +62,7 @@ class ColorHistogram {
 
 		// BGR color histogram
 		hranges[0]= 0.0;    // BRG range
-		hranges[1]= 255.0;
+		hranges[1]= 256.0;
 		channels[0]= 0;		// the three channels 
 		channels[1]= 1; 
 		channels[2]= 2; 
@@ -84,7 +91,7 @@ class ColorHistogram {
 
 		// BGR color histogram
 		hranges[0]= 0.0;    // BRG range
-		hranges[1]= 255.0;
+		hranges[1]= 256.0;
 		channels[0]= 0;		// the three channels 
 		channels[1]= 1; 
 		channels[2]= 2; 
@@ -150,7 +157,7 @@ class ColorHistogram {
 
 	// Computes the 2D ab histogram.
 	// BGR source image is converted to Lab
-	cv::MatND getabHistogram(const cv::Mat &image) {
+	cv::Mat getabHistogram(const cv::Mat &image) {
 
 		cv::Mat hist;
 
@@ -159,8 +166,8 @@ class ColorHistogram {
 		cv::cvtColor(image, lab, CV_BGR2Lab);
 
 		// Prepare arguments for a 2D color histogram
-		hranges[0]= -128.0;
-		hranges[1]= 127.0;
+		hranges[0]= 0;
+		hranges[1]= 256.0;
 		channels[0]= 1; // the two channels used are ab 
 		channels[1]= 2; 
 
@@ -178,36 +185,6 @@ class ColorHistogram {
 		return hist;
 	}
 
-	/*
-	// Computes the 1D Hue histogram with a mask.
-	// BGR source image is converted to HSV
-	cv::MatND getHueHistogram(const cv::Mat &image) {
-
-		cv::Mat hist;
-
-		// Convert to Lab colour space
-		cv::Mat hue;
-		cv::cvtColor(image, hue, CV_BGR2HSV);
-
-		// Prepare arguments for a 1D hue histogram
-		hranges[0]= 0.0;
-		hranges[1]= 180.0;
-		channels[0]= 0; // the hue channel 
-
-		// Compute histogram
-		cv::calcHist(&hue, 
-			1,			// histogram of 1 image only
-			channels,	// the channel used
-			cv::Mat(),	// no mask is used
-			hist,		// the resulting histogram
-			1,			// it is a 1D histogram
-			histSize,	// number of bins
-			ranges		// pixel value range
-		);
-
-		return hist;
-	}
-	*/
 	cv::Mat colorReduce(const cv::Mat &image, int div=64) {
 
 	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
@@ -229,7 +206,7 @@ class ColorHistogram {
 	  }
 
 	  return result;
-}
+    }
 
 };
 
