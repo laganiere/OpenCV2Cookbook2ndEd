@@ -24,43 +24,32 @@
 #include <vector>
 
 #include "histogram.h"
-
-template <typename T, int N>
-class IntegralImage {
-
-	  cv::Mat integralImage;
-
-  public:
-
-	  IntegralImage(cv::Mat image) {
-
-		cv::integral(image,integralImage,cv::DataType<T>::type);
-	  }
-
-	  cv::Vec<T,N> operator()(int xo, int yo, int width, int height) {
-
-		  return (integralImage.at<cv::Vec<T,N>>(yo+height,xo+width)
-			      -integralImage.at<cv::Vec<T,N>>(yo+height,xo)
-			      -integralImage.at<cv::Vec<T,N>>(yo,xo+width)
-			      +integralImage.at<cv::Vec<T,N>>(yo,xo));
-	  }
-
-	  cv::Vec<T,N> operator()(int x, int y, int radius) {
-
-		  return (integralImage.at<cv::Vec<T,N>>(y+radius+1,x+radius+1)
-			      -integralImage.at<cv::Vec<T,N>>(y+radius+1,x-radius)
-			      -integralImage.at<cv::Vec<T,N>>(y-radius,x+radius+1)
-			      +integralImage.at<cv::Vec<T,N>>(y-radius,x-radius));
-	  }
-};
+#include "integral.h"
 
 int main()
 {
+	// Open image
 	cv::Mat image= cv::imread("bike55.bmp",0);
-	if (!image.data)
-		return 0; 
+	// define image roi
+	int xo=97, yo=112;
+	int width=25, height=30;
+	cv::Mat roi(image,cv::Rect(xo,yo,width,height));
+	// compute sum
+	// returns a Scalar to work with multi-channel images
+	cv::Scalar sum= cv::sum(roi);
 
-	cv::Mat roi(image,cv::Rect(97,112,25,30));
+	std::cout << sum[0] << std::endl;
+
+	// compute integral image
+	cv::Mat integralImage;
+	cv::integral(image,integralImage,CV_32S);
+	// get sum over an area using three additions/subtractions
+    int sumInt= integralImage.at<int>(yo+height,xo+width)
+			      -integralImage.at<int>(yo+height,xo)
+			      -integralImage.at<int>(yo,xo+width)
+			      +integralImage.at<int>(yo,xo);
+
+	std::cout << sumInt << std::endl;
 
 	// compute histogram of 16 bins
 	Histogram1D h;
@@ -69,40 +58,17 @@ int main()
 
 	cv::namedWindow("Histo");
 	cv::imshow("Histo",h.getHistogramImage(roi,16));
+	std::cout << histo << std::endl;
 
-	// Loop over each bin
-	for (int i=0; i<16; i++) 
-		std::cout << "Value " << i << " = " << histo.at<float>(i) << std::endl;  
-
-	// create vector of 16 binay images
-	std::vector<cv::Mat> planes;
-	image= image&0xF0;
-
-	for (int i=0; i<16; i++) {
-
-		// 1 for each pixel equals to i<<4
-		planes.push_back((image==(i<<4))&0x1);
-	}
-
-	// create 16-channel image
-	cv::Mat dst;
-	cv::merge(planes,dst);
-
-	// compute integral image
-	cv::Mat sum;
-	cv::integral(dst,sum);
-
-	IntegralImage<int,16> integral(dst);
-	cv::Vec<int,16> hh= integral(97,112,25,30);
-	std::cout<<"valeur="<<hh<<std::endl;
-
-	cv::Mat hi(hh),ho;
-	hi.convertTo(ho,CV_32F);
-	std::cout<<"valeur="<<ho;
-	h.setNBins(16);
+	// compute histogram of 16 bins with integral image
+	cv::Mat planes;
+	convertToBinaryPlanes(image,planes,16);
+	IntegralImage<float,16> intHisto(planes);
+	cv::Vec<float,16> histogram= intHisto(97,112,25,30);
+	std::cout<< histogram << std::endl;
 
 	cv::namedWindow("Histo2");
-	cv::Mat im= h.getImageOfHistogram(ho,16);
+	cv::Mat im= h.getImageOfHistogram(cv::Mat(histogram),16);
 	cv::imshow("Histo2",im);	
 /*
 	cv::Mat image2= cv::imread("bike65.bmp",0);

@@ -40,8 +40,8 @@ class ColorHistogram {
 		histSize[0]= histSize[1]= histSize[2]= 256;
 		hranges[0]= 0.0;    // BRG range from 0 to 256
 		hranges[1]= 256.0;
-		ranges[0]= hranges; // all channels have the same range 
-		ranges[1]= hranges; 
+		ranges[0]= hranges; // in this class,  
+		ranges[1]= hranges; // all channels have the same range
 		ranges[2]= hranges; 
 		channels[0]= 0;		// the three channels 
 		channels[1]= 1; 

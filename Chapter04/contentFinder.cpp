@@ -49,8 +49,9 @@ int main()
 
 	// Create the content finder
 	ContentFinder finder;
-	finder.setHistogram(hist);
 
+	// set histogram to be back-projected
+	finder.setHistogram(hist);
 	finder.setThreshold(-1.0f);
 
 	// Get back-projection
@@ -81,19 +82,15 @@ int main()
 	// Load color image
 	ColorHistogram hc;
 	cv::Mat color= cv::imread("waves.jpg");
-	color= hc.colorReduce(color,32);
 
-	// Draw a rectangle around the reference area
-	cv::rectangle(color,cv::Rect(0,0,165,75),cv::Scalar(0,0,0));
-
-	cv::namedWindow("Color Image");
-	cv::imshow("Color Image",color);
-
+	// extract region of interest
 	imageROI= color(cv::Rect(0,0,165,75)); // blue sky area
 
-	// Get 3D colour histogram
+	// Get 3D colour histogram (8 bins per channel)
+	hc.setSize(8); // 8x8x8
 	cv::Mat shist= hc.getHistogram(imageROI);
 
+	// set histogram to be back-projected
 	finder.setHistogram(shist);
 	finder.setThreshold(0.05f);
 
@@ -105,7 +102,6 @@ int main()
 
 	// Second color image
 	cv::Mat color2= cv::imread("dog.jpg");
-	color2= hc.colorReduce(color2,32);
 
 	cv::namedWindow("Second Image");
 	cv::imshow("Second Image",color2);
@@ -117,13 +113,15 @@ int main()
 	cv::imshow("Result color (2)",result2);
 
 	// Get ab color histogram
-	color= cv::imread("waves.jpg");
-	imageROI= color(cv::Rect(0,0,165,75)); // blue sky area
+	hc.setSize(256); // 256x256
 	cv::Mat colorhist= hc.getabHistogram(imageROI);
 
+	// display 2D histogram
+	colorhist.convertTo(tmp,CV_8U,-1.0,255.0);
 	cv::namedWindow("ab histogram");
-	cv::imshow("ab histogram",colorhist);
+	cv::imshow("ab histogram",tmp);
 
+	// set histogram to be back-projected
 	finder.setHistogram(colorhist);
 	finder.setThreshold(0.05f);
 
@@ -133,7 +131,7 @@ int main()
 
 	// Get back-projection of ab histogram
 	int ch[2]={1,2};
-	result1= finder.find(lab,0,255.0f,ch);
+	result1= finder.find(lab,0,256.0f,ch);
 
 	cv::namedWindow("Result ab (1)");
 	cv::imshow("Result ab (1)",result1);
@@ -141,40 +139,48 @@ int main()
 	// Second colour image
 	cv::cvtColor(color2, lab, CV_BGR2Lab);
 
-	result2= finder.find(lab,-128.0f,127.0f,ch);
+	// Get back-projection of ab histogram
+	result2= finder.find(lab,0,256.0,ch);
 
 	cv::namedWindow("Result ab (2)");
 	cv::imshow("Result ab (2)",result2);
-	/*
-	// Get Hue colour histogram
-	colour= cv::imread("waves.jpg");
-	imageROI= colour(cv::Rect(0,0,165,75)); // blue sky area
-	colourhist= hc.getHueHistogram(imageROI);
 
-	finder.setHistogram(colourhist);
-	finder.setThreshold(0.3f);
+	// Draw a rectangle around the reference sky area
+	cv::rectangle(color,cv::Rect(0,0,165,75),cv::Scalar(0,0,0));
+	cv::namedWindow("Color Image");
+	cv::imshow("Color Image",color);
+
+	
+	// Get Hue colour histogram
+	hc.setSize(180); // 180 bins
+	colorhist= hc.getHueHistogram(imageROI);
+
+	// set histogram to be back-projected
+	finder.setHistogram(colorhist);
 
 	// Convert to HSV space
 	cv::Mat hsv;
-	cv::cvtColor(colour, hsv, CV_BGR2HSV);
+	cv::cvtColor(color, hsv, CV_BGR2HSV);
 
 	// Get back-projection of hue histogram
 	ch[0]=0;
-	result1= finder.find(hsv,0.0f,180.0f,ch,1);
+	result1= finder.find(hsv,0.0f,180.0f,ch);
 
 	cv::namedWindow("Result Hue (1)");
 	cv::imshow("Result Hue (1)",result1);
 
 	// Second colour image
-	colour2= cv::imread("../dog.jpg");
+	color2= cv::imread("dog.jpg");
 
-	cv::cvtColor(colour2, hsv, CV_BGR2HSV);
+	// Convert to HSV space
+	cv::cvtColor(color2, hsv, CV_BGR2HSV);
 
-	result2= finder.find(hsv,0.0f,180.0f,ch,1);
+	// Get back-projection of hue histogram
+	result2= finder.find(hsv,0.0f,180.0f,ch);
 
 	cv::namedWindow("Result Hue (2)");
 	cv::imshow("Result Hue (2)",result2);
-*/
+
 	cv::waitKey();
 	return 0;
 }

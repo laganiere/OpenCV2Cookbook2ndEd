@@ -40,6 +40,7 @@ class ContentFinder {
 
 	ContentFinder() : threshold(0.1f), isSparse(false) {
 
+		// in this class,
 		// all channels have the same range
 		ranges[0]= hranges;  
 		ranges[1]= hranges; 
@@ -62,30 +63,28 @@ class ContentFinder {
 	void setHistogram(const cv::Mat& h) {
 
 		isSparse= false;
-		histogram= h;
-		cv::normalize(histogram,histogram,1.0);
+		cv::normalize(h,histogram,1.0);
 	}
 
 	// Sets the reference histogram
 	void setHistogram(const cv::SparseMat& h) {
 
 		isSparse= true;
-		shistogram= h;
-		cv::normalize(shistogram,shistogram,1.0,cv::NORM_L2);
+		cv::normalize(h,shistogram,1.0,cv::NORM_L2);
 	}
 
-	// All channels used, with range [0,255]
+	// All channels used, with range [0,256[
 	cv::Mat find(const cv::Mat& image) {
 
 		cv::Mat result;
 
-		hranges[0]= 0.0;	// range [0,255]
-		hranges[1]= 255.0;
+		hranges[0]= 0.0;	// default range [0,256[
+		hranges[1]= 256.0;
 		channels[0]= 0;		// the three channels 
 		channels[1]= 1; 
 		channels[2]= 2; 
 
-		return find(image, 0.0, 255.0, channels);
+		return find(image, hranges[0], hranges[1], channels);
 	}
 
 	// Finds the pixels belonging to the histogram
@@ -127,7 +126,7 @@ class ContentFinder {
 
         // Threshold back projection to obtain a binary image
 		if (threshold>0.0)
-			cv::threshold(result, result, 255*threshold, 255, cv::THRESH_BINARY);
+			cv::threshold(result, result, 255.0*threshold, 255.0, cv::THRESH_BINARY);
 
 		return result;
 	}
