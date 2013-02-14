@@ -34,10 +34,10 @@ int main()
 	int xo=97, yo=112;
 	int width=25, height=30;
 	cv::Mat roi(image,cv::Rect(xo,yo,width,height));
+
 	// compute sum
 	// returns a Scalar to work with multi-channel images
 	cv::Scalar sum= cv::sum(roi);
-
 	std::cout << sum[0] << std::endl;
 
 	// compute integral image
@@ -48,46 +48,93 @@ int main()
 			      -integralImage.at<int>(yo+height,xo)
 			      -integralImage.at<int>(yo,xo+width)
 			      +integralImage.at<int>(yo,xo);
-
 	std::cout << sumInt << std::endl;
 
-	// compute histogram of 16 bins
+	// histogram of 16 bins
 	Histogram1D h;
 	h.setNBins(16);
-	cv::Mat histo= h.getHistogram(roi);
+	// compute histogram over image roi 
+	cv::Mat refHistogram= h.getHistogram(roi);
 
-	cv::namedWindow("Histo");
-	cv::imshow("Histo",h.getHistogramImage(roi,16));
-	std::cout << histo << std::endl;
+	cv::namedWindow("Reference Histogram");
+	cv::imshow("Reference Histogram",h.getHistogramImage(roi,16));
+	std::cout << refHistogram << std::endl;
 
-	// compute histogram of 16 bins with integral image
+	// first create 16-plane binary image
 	cv::Mat planes;
 	convertToBinaryPlanes(image,planes,16);
+	// then compute integral image
 	IntegralImage<float,16> intHisto(planes);
-	cv::Vec<float,16> histogram= intHisto(97,112,25,30);
+
+
+	// for testing compute a histogram of 16 bins with integral image
+	cv::Vec<float,16> histogram= intHisto(xo,yo,width,height);
 	std::cout<< histogram << std::endl;
 
-	cv::namedWindow("Histo2");
+	cv::namedWindow("Reference Histogram (2)");
 	cv::Mat im= h.getImageOfHistogram(cv::Mat(histogram),16);
-	cv::imshow("Histo2",im);	
-/*
-	cv::Mat image2= cv::imread("bike65.bmp",0);
-	if (!image2.data)
+	cv::imshow("Reference Histogram (2)",im);	
+
+	// search in second image
+	cv::Mat secondImage= cv::imread("bike65.bmp",0);
+	if (!secondImage.data)
 		return 0; 
 
-	// reduce to 16 gray shades
-	image2= image2&0xF0;
+	// first create 16-plane binary image
+	convertToBinaryPlanes(secondImage,planes,16);
+	// then compute integral image
+	IntegralImage<float,16> intHistogram(planes);
 
-	cv::Mat roi2(image2,cv::Rect(135,114,25,30));
+	// compute histogram of 16 bins with integral image (testing)
+	histogram= intHistogram(135,114,width,height);
+	std::cout<< histogram << std::endl;
 
-	Histogram1D h2;
-	cv::namedWindow("Histo 2");
-	cv::imshow("Histo 2",h2.getHistogramImage(roi2));
+	cv::namedWindow("Current Histogram");
+	cv::Mat im2= h.getImageOfHistogram(cv::Mat(histogram),16);
+	cv::imshow("Current Histogram",im2);	
 
-	cv::rectangle(image2,cv::Rect(135,114,25,30),cv::Scalar(0,0,255));
-	cv::namedWindow("image 2");
-	cv::imshow("image 2",image2);
-	*/
+	std::cout << "Distance= " << cv::compareHist(refHistogram,histogram,CV_COMP_INTERSECT) << std::endl;
+
+	double maxSimilarity=0.0;
+	int xbest, ybest;
+	// loop over a horizontal strip around girl location in initial image
+	for (int y=110; y<120; y++) {
+		for (int x=0; x<secondImage.cols-width; x++) {
+
+	
+			// compute histogram of 16 bins using integral image
+			histogram= intHistogram(x,y,width,height);
+			// compute distance with reference histogram
+			double distance= cv::compareHist(refHistogram,histogram,CV_COMP_INTERSECT);
+			// find position of most similar histogram
+			if (distance>maxSimilarity) {
+
+				xbest= x;
+				ybest= y;
+				maxSimilarity= distance;
+			}
+
+			std::cout << "Distance(" << x << "," << y << ")=" << distance << std::endl;
+		}
+	}
+
+    std::cout << "Best solution= (" << xbest << "," << ybest << ")=" << maxSimilarity << std::endl;
+
+	// draw a rectangle around target object
+	cv::rectangle(image,cv::Rect(xo,yo,width,height),0);
+	cv::namedWindow("Initial Image");
+	cv::imshow("Initial Image",image);
+
+	cv::namedWindow("New Image");
+	cv::imshow("New Image",secondImage);
+
+	// draw rectangle at best location
+	cv::rectangle(secondImage,cv::Rect(xbest,ybest,width,height),0);
+	// draw rectangle around search area
+	cv::rectangle(secondImage,cv::Rect(0,110,secondImage.cols,height+10),255);
+	cv::namedWindow("Object location");
+	cv::imshow("Object location",secondImage);
+	
 	cv::waitKey();
 	
 }

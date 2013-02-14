@@ -29,30 +29,34 @@ int main()
 	if (!image.data)
 		return 0; 
 
-	cv::namedWindow("image");
-	cv::imshow("image",image);
+	// display original image
+	cv::namedWindow("Original Image");
+	cv::imshow("Original Image",image);
 
+	// using a fixed threshold 
 	cv::Mat binaryFixed;
 	cv::Mat binaryAdaptive;
 	cv::threshold(image,binaryFixed,70,255,cv::THRESH_BINARY);
 
+	// using as adaptive threshold
+	int blockSize= 21;
+	int threshold=9;
+
 	int64 time;
 	time= cv::getTickCount();
-	cv::adaptiveThreshold(image,binaryAdaptive,255,cv::ADAPTIVE_THRESH_MEAN_C,cv::THRESH_BINARY,21,9);
+	cv::adaptiveThreshold(image,binaryAdaptive,255,
+		                  cv::ADAPTIVE_THRESH_MEAN_C,cv::THRESH_BINARY,
+						  blockSize,threshold);
 	time= cv::getTickCount()-time;
 	std::cout << "time (adaptiveThreshold)= " << time << std::endl; 
 
+	// compute integral image
 	IntegralImage<int,1> integral(image);
 
+	// test integral result
 	std::cout << "sum=" << integral(18,45,30,50) << std::endl;
-
 	cv::Mat test(image,cv::Rect(18,45,30,50));
 	cv::Scalar t= cv::sum(test);
-	std::cout << "sum test=" << t[0] << std::endl;
-
-	std::cout << "sum=" << integral(65,115,15) << std::endl;
-	cv::Mat test2(image,cv::Rect(50,100,31,31));	
-	t= cv::sum(test2);
 	std::cout << "sum test=" << t[0] << std::endl;
 
 	cv::namedWindow("Fixed Threshold");
@@ -61,47 +65,52 @@ int main()
 	cv::namedWindow("Adaptive Threshold");
 	cv::imshow("Adaptive Threshold",binaryAdaptive);
 
-	time= cv::getTickCount();
-	  cv::Mat binary= image.clone();
-	  int nl= binary.rows; // number of lines
-	  int nc= binary.cols; // total number of elements per line
-              
-	  cv::Mat iimage;
-	  cv::integral(image,iimage,CV_32S);
+	cv::Mat binary= image.clone();
 
-      for (int j=10; j<nl-10; j++) {
+	time= cv::getTickCount();	  
+	int nl= binary.rows; // number of lines
+	int nc= binary.cols; // total number of elements per line
+              
+	// compute integral image
+	cv::Mat iimage;
+	cv::integral(image,iimage,CV_32S);
+
+	// for each row
+	int halfSize= blockSize/2;
+    for (int j=halfSize; j<nl-halfSize; j++) {
 
 		  // get the address of row j
 		  uchar* data= binary.ptr<uchar>(j);
-		  int* idata1= iimage.ptr<int>(j-10);
-		  int* idata2= iimage.ptr<int>(j+10);
+		  int* idata1= iimage.ptr<int>(j-halfSize);
+		  int* idata2= iimage.ptr<int>(j+halfSize);
 
-          for (int i=10; i<nc-10; i++) {
+		  // for pixel of a line
+          for (int i=halfSize; i<nc-halfSize; i++) {
  
-            // process each pixel ---------------------
+			  // compute sum
+			  int sum= (idata2[i+halfSize]-idata2[i-halfSize]-
+				        idata1[i+halfSize]+idata1[i-halfSize])/(blockSize*blockSize);
 
-//			  if (data[i]<integral(i,j,10)/(21*21) - 9)
-			  int sum= (idata2[i+10]-idata2[i-10]-idata1[i+10]+idata1[i-10])/(21*21);
-			  if (data[i]<sum - 9)
+			  // apply adaptive threshold
+			  if (data[i]<(sum-threshold))
 				  data[i]= 0;
 			  else
 				  data[i]=255;
- 
-            // end of pixel processing ----------------
- 
-          } // end of line                   
-      }
+          }                    
+    }
+
 	time= cv::getTickCount()-time;
 	std::cout << "time integral= " << time << std::endl; 
 
 	cv::namedWindow("Adaptive Threshold (integral)");
 	cv::imshow("Adaptive Threshold (integral)",binary);
 
+	// adaptive threshold using image operators
 	time= cv::getTickCount();
 	cv::Mat filtered;
 	cv::Mat binaryFiltered;
-	cv::boxFilter(image,filtered,CV_8U,cv::Size(21,21));
-	filtered= filtered-9;
+	cv::boxFilter(image,filtered,CV_8U,cv::Size(blockSize,blockSize));
+	filtered= filtered-threshold;
 	binaryFiltered= image>= filtered;
 	time= cv::getTickCount()-time;
 

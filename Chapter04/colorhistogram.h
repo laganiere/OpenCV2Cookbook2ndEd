@@ -88,7 +88,6 @@ class ColorHistogram {
 			               histSize, // size of each dimension
 						   CV_32F);
 
-
 		// BGR color histogram
 		hranges[0]= 0.0;    // BRG range
 		hranges[1]= 256.0;
