@@ -39,14 +39,18 @@ int main()
 	cv::threshold(image,binaryFixed,70,255,cv::THRESH_BINARY);
 
 	// using as adaptive threshold
-	int blockSize= 21;
-	int threshold=9;
+	int blockSize= 21; // size of the neighborhood
+	int threshold=10;  // pixel will be compared to (mean-threshold)
 
 	int64 time;
 	time= cv::getTickCount();
-	cv::adaptiveThreshold(image,binaryAdaptive,255,
-		                  cv::ADAPTIVE_THRESH_MEAN_C,cv::THRESH_BINARY,
-						  blockSize,threshold);
+	cv::adaptiveThreshold(image,           // input image
+		                  binaryAdaptive,  // output binary image
+						  255,             // max value for output
+		                  cv::ADAPTIVE_THRESH_MEAN_C, // adaptive method
+						  cv::THRESH_BINARY, // threshold type
+						  blockSize,       // size of the block
+						  threshold);      // threshold used
 	time= cv::getTickCount()-time;
 	std::cout << "time (adaptiveThreshold)= " << time << std::endl; 
 
@@ -77,19 +81,19 @@ int main()
 
 	// for each row
 	int halfSize= blockSize/2;
-    for (int j=halfSize; j<nl-halfSize; j++) {
+    for (int j=halfSize; j<nl-halfSize-1; j++) {
 
 		  // get the address of row j
 		  uchar* data= binary.ptr<uchar>(j);
 		  int* idata1= iimage.ptr<int>(j-halfSize);
-		  int* idata2= iimage.ptr<int>(j+halfSize);
+		  int* idata2= iimage.ptr<int>(j+halfSize+1);
 
 		  // for pixel of a line
-          for (int i=halfSize; i<nc-halfSize; i++) {
+          for (int i=halfSize; i<nc-halfSize-1; i++) {
  
 			  // compute sum
-			  int sum= (idata2[i+halfSize]-idata2[i-halfSize]-
-				        idata1[i+halfSize]+idata1[i-halfSize])/(blockSize*blockSize);
+			  int sum= (idata2[i+halfSize+1]-idata2[i-halfSize]-
+				        idata1[i+halfSize+1]+idata1[i-halfSize])/(blockSize*blockSize);
 
 			  // apply adaptive threshold
 			  if (data[i]<(sum-threshold))
