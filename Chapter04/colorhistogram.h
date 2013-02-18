@@ -183,30 +183,6 @@ class ColorHistogram {
 
 		return hist;
 	}
-
-	cv::Mat colorReduce(const cv::Mat &image, int div=64) {
-
-	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
-	  // mask used to round the pixel value
-	  uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
-
-	  cv::Mat_<cv::Vec3b>::const_iterator it= image.begin<cv::Vec3b>();
-	  cv::Mat_<cv::Vec3b>::const_iterator itend= image.end<cv::Vec3b>();
-
-	  // Set output image (always 1-channel)
-	  cv::Mat result(image.rows,image.cols,image.type());
-	  cv::Mat_<cv::Vec3b>::iterator itr= result.begin<cv::Vec3b>();
-
-	  for ( ; it!= itend; ++it, ++itr) {
-        
-        (*itr)[0]= ((*it)[0]&mask) + div/2;
-        (*itr)[1]= ((*it)[1]&mask) + div/2;
-        (*itr)[2]= ((*it)[2]&mask) + div/2;
-	  }
-
-	  return result;
-    }
-
 };
 
 

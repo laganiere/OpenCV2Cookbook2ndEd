@@ -26,43 +26,40 @@ class ImageComparator {
 
   private:
 
-	cv::Mat reference;  // reference image
-	cv::Mat input;      // input image
 	cv::Mat refH;       // reference histogram
 	cv::Mat inputH;     // histogram of input image
 
 	ColorHistogram hist; 
-	int div; // color reduction factor
+	int nBins; // number of bins used in each color channel
 
   public:
 
-	ImageComparator() : div(32) {
+	ImageComparator() :nBins(8) {
 
 	}
 
-	// Color reduction factor
-	// The comparaison will be made on images with
-	// color space reduced by this factor in each dimension
-	void setColorReduction( int factor) {
+	// Set number of bins used when comparing the histograms
+	void setNumberOfBins( int bins) {
 
-		div= factor;
+		nBins= bins;
 	}
 
-	int getColorReduction() {
+	int getNumberOfBins() {
 
-		return div;
+		return nBins;
 	}
 
+	// compute histogram of reference image
 	void setReferenceImage(const cv::Mat& image) {
 
-		reference= hist.colorReduce(image,div);
-		refH= hist.getHistogram(reference);
+		hist.setSize(nBins);
+		refH= hist.getHistogram(image);
 	}
 
+	// compare the image using their BGR histograms
 	double compare(const cv::Mat& image) {
 
-		input= hist.colorReduce(image,div);
-		inputH= hist.getHistogram(input);
+		inputH= hist.getHistogram(image);
 
 		return cv::compareHist(refH,inputH,CV_COMP_INTERSECT);
 	}

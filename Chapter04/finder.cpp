@@ -80,6 +80,10 @@ int main()
 	finder.setThreshold(-1.0f); // no thresholding
 	cv::Mat result= finder.find(hsv,0.0f,180.0f,ch);
 
+	// Display back projection result
+	cv::namedWindow("Backprojection on second image");
+	cv::imshow("Backprojection on second image",result);
+
 	// initial window position
 	cv::Rect rect(110,260,35,40);
 	cv::rectangle(image, rect, cv::Scalar(0,0,255));
