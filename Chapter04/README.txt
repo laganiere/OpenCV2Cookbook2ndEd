@@ -7,6 +7,32 @@ Files:
 	histogram.h
 	histograms.cpp
 	colorhistogram.h
-correspond to Recipe:
+correspond to Recipes:
 Computing the image histogram
+Applying Look-up Tables to Modify Image Appearance
 
+Files:
+	colorhistogram.h
+	contentfinder.h
+	contentfinder.cpp
+correspond to Recipe:
+Backprojecting a Histogram to Detect Specific Image Content
+
+Files:
+	colorhistogram.h
+	finder.cpp
+correspond to Recipe:
+Using the Meanshift Algorithm to Find an Object
+
+Files:
+	imageComparator.h
+	retrieve.cpp
+correspond to Recipe:
+Retrieving Similar Images using Histogram Comparison
+
+Files:
+	integral.h
+	integral.cpp
+	tracking.cpp
+correspond to Recipe:
+Counting pixels with integral images
