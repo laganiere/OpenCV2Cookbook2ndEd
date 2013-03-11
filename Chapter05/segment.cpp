@@ -156,8 +156,8 @@ int main()
 
 	// draw rectangle on original image
 	cv::rectangle(image, rectangle2, cv::Scalar(255,255,255),1);
-	cv::namedWindow("Image 2");
-	cv::imshow("Image 2",image);
+	cv::namedWindow("Image with rectangle");
+	cv::imshow("Image with rectangle",image);
 
 	// display result
 	cv::namedWindow("Foreground objects");

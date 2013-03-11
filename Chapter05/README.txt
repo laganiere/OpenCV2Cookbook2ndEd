@@ -16,7 +16,14 @@ correspond to Recipe:
 Detecting edges and corners using morphological filters
 
 Files:
+	mserFeature.cpp
+	mserFeatures.h
+correspond to Recipe:
+Extracting distinctive regions using MSER
+
+Files:
 	segment.cpp
 	watershedSegmentation.h
-correspond to Recipe:
+correspond to Recipes:
 Segmenting images using watersheds
+Extracting foreground objects with the GrabCut algorithm
