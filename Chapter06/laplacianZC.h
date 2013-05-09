@@ -25,12 +25,9 @@
 class LaplacianZC {
 
   private:
-
-	  // original image
-	  cv::Mat img;
-
-	  // 32-bit float image containing the Laplacian
+	  // laplacian
 	  cv::Mat laplace;
+
 	  // Aperture size of the laplacian kernel
 	  int aperture;
 
@@ -53,13 +50,8 @@ class LaplacianZC {
 	  // Compute the floating point Laplacian
 	  cv::Mat computeLaplacian(const cv::Mat& image) {
 
-
 		  // Compute Laplacian
 		  cv::Laplacian(image,laplace,CV_32F,aperture);
-
-		  // Keep local copy of the image
-		  // (used for zero-crossings)
-		  img= image.clone();
 
 		  return laplace;
 	  }
@@ -86,69 +78,26 @@ class LaplacianZC {
 	  }
 
 	  // Get a binary image of the zero-crossings
-	  // if the product of the two adjascent pixels is
-	  // less than threshold then this zero-crossing will be ignored
-	  cv::Mat getZeroCrossings(float threshold=1.0) {
+	  // laplacian image should be CV_32F
+	  cv::Mat getZeroCrossings(cv::Mat laplace) {
 
-		  // Create the iterators
-		  cv::Mat_<float>::const_iterator it= laplace.begin<float>()+laplace.step1();
-		  cv::Mat_<float>::const_iterator itend= laplace.end<float>();
-		  cv::Mat_<float>::const_iterator itup= laplace.begin<float>();
+		  // threshold at 0
+		  // negative values in black
+		  // positive values in white
+		  cv::Mat signImage;
+		  cv::threshold(laplace,signImage,0,255,cv::THRESH_BINARY);
 
-		  // Binary image initialize to white
-		  cv::Mat binary(laplace.size(),CV_8U,cv::Scalar(255));
-		  cv::Mat_<uchar>::iterator itout= binary.begin<uchar>()+binary.step1();
+		  // convert the +/- image into CV_8U
+		  cv::Mat binary;
+		  signImage.convertTo(binary,CV_8U);
 
-		  // negate the input threshold value
-		  threshold *= -1.0;
-
-		  for ( ; it!= itend; ++it, ++itup, ++itout) {
-
-			  // if the product of two adjascent pixel is negative
-			  // then there is a sign change
-			  if (*it * *(it-1) < threshold)
-				  *itout= 0; // horizontal zero-crossing
-			  else if (*it * *itup < threshold)
-				  *itout= 0; // vertical zero-crossing
-		  }
-
-		  return binary;
+		  // dilate the binary image of +/- regions
+		  cv::Mat dilated;
+		  cv::dilate(binary,dilated,cv::Mat());
+	
+		  // return the zero-crossing contours
+		  return dilated-binary;
 	  }
-
-	  // Get a binary image of the zero-crossings
-	  // if the product of the two adjacent pixels is
-	  // less than threshold then this zero-crossing will be ignored
-	  cv::Mat getZeroCrossingsWithSobel(float threshold) {
-
-		  cv::Mat sx;
-		  cv::Sobel(img,sx,CV_32F,1,0,1);
-		  cv::Mat sy;
-		  cv::Sobel(img,sy,CV_32F,0,1,1);
-
-		  // Create the iterators
-		  cv::Mat_<float>::const_iterator it= laplace.begin<float>()+laplace.step1();
-		  cv::Mat_<float>::const_iterator itend= laplace.end<float>();
-		  cv::Mat_<float>::const_iterator itup= laplace.begin<float>();
-		  cv::Mat_<float>::const_iterator itx= sx.begin<float>()+sx.step1();
-		  cv::Mat_<float>::const_iterator ity= sy.begin<float>()+sy.step1();
-
-		  // Binary image initialize to white
-		  cv::Mat binary(laplace.size(),CV_8U,cv::Scalar(255));
-		  cv::Mat_<uchar>::iterator itout= binary.begin<uchar>()+binary.step1();
-
-		  for ( ; it!= itend; ++it, ++itup, ++itout, ++itx, ++ity) {
-
-			  // if the product of two adjacent pixel is negative
-			  // then there is a sign change
-			  if (*it * *(it-1) < 0.0 && fabs(*ity) > threshold)
-				  *itout= 0; // horizontal zero-crossing
-			  else if (*it * *itup < 0.0 && fabs(*ity) > threshold)
-				  *itout= 0; // vertical zero-crossing
-		  }
-
-		  return binary;
-	  }
-
 };
 
 

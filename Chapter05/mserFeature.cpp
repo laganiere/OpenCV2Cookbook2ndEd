@@ -80,6 +80,7 @@ int main()
 
 	cv::namedWindow("MSER point sets");
 	cv::imshow("MSER point sets",output);
+	cv::imwrite("mser.bmp", output);
 
 	// detection using mserFeatures class
 
@@ -100,46 +101,4 @@ int main()
 	cv::imshow("Image with MSER regions",result);
 
 	cv::waitKey();
-/*
-		std::cout<< i << " "<<points[i].size()<< std::endl;
-//		cv::RotatedRect rr= cv::fitEllipse(points[i]);
-		cv::RotatedRect rr= cv::minAreaRect(points[i]);
-	//	if (i==23)
-		if (points[i].size()>0.5*rr.size.area())
-		cv::ellipse(image,rr,255);
-		else
-		cv::ellipse(image,rr,0);
-	//	if (points[i].size() > 500 && points[i].size() < 3000)
-
-		for (int j=0; j<points[i].size(); j++) {
-	//		if(i==23)
-			if (image2.at<cv::Vec3b>(points[i][j])[0]==255) {
-			image2.at<cv::Vec3b>(points[i][j])[0]= b;
-			image2.at<cv::Vec3b>(points[i][j])[1]= g;
-			image2.at<cv::Vec3b>(points[i][j])[2]= r;
-			}
-//			cv::line(image,points[i][j-1],points[i][j],cv::Scalar(255));
-		}
-	cv::namedWindow("Image with MSER ellipses");
-	cv::imshow("Image with MSER ellipses",image);
-
-	cv::namedWindow("Image with MSER regions");
-	cv::imshow("Image with MSER regions",image2);
-		std::cout<< i<<std::endl;
-		cv::waitKey();
-	}
-
-    // Display the image
-	cv::namedWindow("Image with MSER ellipses");
-	cv::imshow("Image with MSER ellipses",image);
-
-	cv::namedWindow("Image with MSER regions");
-	cv::imshow("Image with MSER regions",image2);
-
-	std::vector<cv::KeyPoint> keypoints;
-	cv::MserFeatureDetector mserF;
-	mserF.detect(image,keypoints);
-
-	cv::waitKey();	
-	*/
 }

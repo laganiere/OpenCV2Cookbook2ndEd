@@ -121,7 +121,7 @@ int main()
 	std::cout << std::endl;
 
 	// Compute Laplacian 7x7
-//	cv::Laplacian(image,laplace,CV_8U,7,0.01,128);
+	cv::Laplacian(image,laplace,CV_8U,7,0.01,128);
 
     // Display the image 
 	cv::namedWindow("Laplacian Image");
@@ -144,9 +144,13 @@ int main()
 	LaplacianZC laplacian;
 	laplacian.setAperture(7);
 	cv::Mat flap= laplacian.computeLaplacian(image);
+
+	// display min max values of the lapalcian
 	double lapmin, lapmax;
 	cv::minMaxLoc(flap,&lapmin,&lapmax);
 	std::cout << "Laplacian value range=[" << lapmin << "," << lapmax << "]\n";
+
+	// display laplacian image
 	laplace= laplacian.getLaplacianImage();
 	cv::namedWindow("Laplacian Image (7x7)");
 	cv::imshow("Laplacian Image (7x7)",laplace);
@@ -162,15 +166,9 @@ int main()
 
 	// Compute and display the zero-crossing points
 	cv::Mat zeros;
-	zeros= laplacian.getZeroCrossings(lapmax);
+	zeros= laplacian.getZeroCrossings(flap);
 	cv::namedWindow("Zero-crossings");
-	cv::imshow("Zero-crossings",zeros);
-
-	// Compute and display the zero-crossing points (Sobel version)
-	zeros= laplacian.getZeroCrossings();
-	zeros= laplacian.getZeroCrossingsWithSobel(50);
-	cv::namedWindow("Zero-crossings (2)");
-	cv::imshow("Zero-crossings (2)",zeros);
+	cv::imshow("Zero-crossings",255-zeros);
 
 	// Print window pixel values
 	for (int i=0; i<12; i++) {
@@ -178,7 +176,7 @@ int main()
 			std::cout << std::setw(2) << static_cast<int>(zeros.at<uchar>(i+135,j+362)) << " ";
 		std::cout << std::endl;
 	}
-
+	
 	// down-sample and up-sample the image
 	cv::Mat reduced, rescaled;
 	cv::pyrDown(image, reduced);
@@ -213,16 +211,23 @@ int main()
 	cv::imshow("DoG Image",dogImage);
 
 	// Apply two Gaussian filters
-	cv::Mat gauss25;
-	cv::GaussianBlur(image,gauss25,cv::Size(),2.5);
+	cv::Mat gauss20;
+	cv::GaussianBlur(image,gauss20,cv::Size(),2.0);
+	cv::Mat gauss22;
+	cv::GaussianBlur(image,gauss22,cv::Size(),2.2);
 
 	// compute a difference of Gaussians 
-	cv::subtract(gauss25, gauss15, dog, cv::Mat(), CV_16S);
-	dog.convertTo(dogImage,CV_8U,2.0,128);
+	cv::subtract(gauss22, gauss20, dog, cv::Mat(), CV_32F);
+	dog.convertTo(dogImage,CV_8U,10.0,128);
 
     // Display the DoG image
 	cv::namedWindow("DoG Image (2)");
 	cv::imshow("DoG Image (2)",dogImage);
+
+    // Display the zero-crossings of DoG 
+	zeros= laplacian.getZeroCrossings(dog);
+	cv::namedWindow("Zero-crossings of DoG");
+	cv::imshow("Zero-crossings of DoG",255-zeros);
 
     // Display the image with window
 	cv::rectangle(image,cv::Point(362,135),cv::Point(374,147),cv::Scalar(255,255,255));

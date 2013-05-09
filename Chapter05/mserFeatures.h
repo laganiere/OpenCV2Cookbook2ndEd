@@ -39,7 +39,7 @@ class MSERFeatures {
 				   int delta=5, // delta value used for stability measure
 				   double maxVariation=0.25, // max allowed area variation
 				   double minDiversity=0.2)  // min size increase between child and parent
-		              : mser(delta,minArea,maxArea,maxVariation=,minDiversity=), 
+		              : mser(delta,minArea,maxArea,maxVariation,minDiversity), 
 					    minAreaRatio(minAreaRatio) {}
 
 	  // get the rotated bouding rectangles corresponding to each MSER feature
