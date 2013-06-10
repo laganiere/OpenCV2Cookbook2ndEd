@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 8 of the cookbook:  
+   This file contains material supporting chapter 7 of the cookbook:  
    Computer Vision Programming using the OpenCV Library 
    Second Edition 
    by Robert Laganiere, Packt Publishing, 2013.
@@ -326,6 +326,136 @@ int main()
 
 	std::cout << "Number of ORB keypoints: " << keypoints.size() << std::endl; 
 
+	/*
+	cv::Rect neighbors(10,10,3,3);
+	cv::Mat cornerA(image,neighbors);
+	neighbors.x=20;
+	neighbors.y=20;
+	cv::Mat cornerB(image,neighbors);
+	cv::Mat result;
+	result=0;
+	cv::matchTemplate(cornerA,cornerB,result,CV_TM_SQDIFF);
+	std::cout << cornerA << std::endl;
+	std::cout << cornerB << std::endl;
+	std::cout << result << std::endl;
+
+
+	
+	// image matching
+
+	// 1. Read input images
+	cv::Mat image1= cv::imread("church01.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat image2= cv::imread("church02.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+
+	// 2. Define keypoints vector
+	std::vector<cv::KeyPoint> keypoints1;
+	std::vector<cv::KeyPoint> keypoints2;
+
+	// 3. Define feature detector
+	cv::FastFeatureDetector fastDet(80);
+
+	// 4. Keypoint detection
+	fastDet.detect(image1,keypoints1);
+	fastDet.detect(image1,keypoints2);
+
+	// 5. Define a neighborhood
+	cv::Rect neighbors(0,0,3,3); // 3x3
+	cv::Mat patch1;
+	cv::Mat patch2;
+
+	// 5. Forall keypoints in first image
+	//    find best match in second image
+	cv::Mat result;
+	int best;
+
+	//for all keypoints in image 1
+	std::vector<cv::KeyPoint>::iterator it1= keypoints1.begin();
+	while (it1!= keypoints1.end()) {
+	
+		// define image patch
+		neighbors.x= it1->pt.x;
+		neighbors.x= it1->pt.x;
+		patch1= image1(neighbors);
+
+		// reset best correlation value;
+		best= 1000000;
+
+		//for all keypoints in image 2
+		std::vector<cv::KeyPoint>::iterator it2= keypoints2.begin();
+		while (it2!= keypoints2.end()) {
+
+			// define image patch
+			neighbors.x= it2->pt.x;
+			neighbors.x= it2->pt.x;
+			patch2= image2(neighbors);
+			cv::matchTemplate(patch1,patch2,result,CV_TM_SQDIFF);
+
+			// check if it is a best match
+			if (result.at<uchar>(0,0)<best) {
+
+			}
+
+			it2++;
+		}
+			
+		it1++;
+	}
+	*/
+	/*
+	// Read input image
+	image= cv::imread("church03.jpg",0);
+
+	keypoints.clear();
+	// Construct the SURF feature detector object
+	cv::SurfFeatureDetector surf(2500);
+	// Detect the SURF features
+	surf.detect(image,keypoints);
+	
+	cv::Mat featureImage;
+	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // Display the corners
+	cv::namedWindow("SURF Features");
+	cv::imshow("SURF Features",featureImage);
+
+	// Read input image
+	image= cv::imread("church01.jpg",0);
+
+	keypoints.clear();
+	// Construct the SURF feature detector object
+	cv::SiftFeatureDetector sift(
+		0.03,  // feature threshold
+		10.);  // threshold to reduce
+	           // sensitivity to lines
+
+	// Detect the SURF features
+	sift.detect(image,keypoints);
+	
+	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // Display the corners
+	cv::namedWindow("SIFT Features");
+	cv::imshow("SIFT Features",featureImage);
+
+	// Read input image
+	image= cv::imread("church01.jpg",0);
+
+	keypoints.clear();
+
+	cv::MserFeatureDetector mser;
+	mser.detect(image,keypoints);
+	
+	// Draw the keypoints with scale and orientation information
+	cv::drawKeypoints(image,		// original image
+		keypoints,					// vector of keypoints
+		featureImage,				// the resulting image
+		cv::Scalar(255,255,255),	// color of the points
+		cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //drawing flag
+
+    // Display the corners
+	cv::namedWindow("MSER Features");
+	cv::imshow("MSER Features",featureImage);
+	*/
 	cv::waitKey();
 	return 0;
 }

@@ -1,4 +1,4 @@
-This directory contains material supporting chapter 7 of the cookbook:  
+This directory contains material supporting chapter 8 of the cookbook:  
 Computer Vision Programming using the OpenCV Library. 
 Second Edition
 
@@ -9,11 +9,8 @@ Files:
 	harrisDetector.h
 	interestPoints.cpp
 correspond to Recipes:
-Detecting Harris Corners
-Detecting Fast Features
-Detecting the Scale-Invariant SURF Features
+Detecting Corners in images
+Detecting features very fast
+Detecting Scale-Invariant Features
+Detecting fast features at multiple scales
 
-File:
-	blobs.cpp
-correspond to Recipe:
-Describing SURF Features
