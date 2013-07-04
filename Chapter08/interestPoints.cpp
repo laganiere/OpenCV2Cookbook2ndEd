@@ -37,8 +37,8 @@ int main()
 		return 0; 
 
     // Display the image
-	cv::namedWindow("Original Image");
-	cv::imshow("Original Image",image);
+	cv::namedWindow("Original");
+	cv::imshow("Original",image);
 
 	// Detect Harris Corners
 	cv::Mat cornerStrength;
@@ -54,8 +54,8 @@ int main()
                  threshold,255,cv::THRESH_BINARY_INV);
 
     // Display the corners
-	cv::namedWindow("Harris Corner Map");
-	cv::imshow("Harris Corner Map",harrisCorners);
+	cv::namedWindow("Harris");
+	cv::imshow("Harris",harrisCorners);
 
 	// Create Harris detector instance
 	HarrisDetector harris;
@@ -63,13 +63,13 @@ int main()
 	harris.detect(image);
     // Detect Harris corners
 	std::vector<cv::Point> pts;
-	harris.getCorners(pts,0.01);
+	harris.getCorners(pts,0.02);
 	// Draw Harris corners
 	harris.drawOnImage(image,pts);
 
     // Display the corners
-	cv::namedWindow("Harris Corners");
-	cv::imshow("Harris Corners",image);
+	cv::namedWindow("Corners");
+	cv::imshow("Corners",image);
 
 	// GFTT:
 
@@ -88,13 +88,13 @@ int main()
 	while (it!=corners.end()) {
 
 		// draw a circle at each corner location
-		cv::circle(image,*it,3,cv::Scalar(255,255,255),2);
+		cv::circle(image,*it,3,cv::Scalar(255,255,255),1);
 		++it;
 	}
 
     // Display the corners
-	cv::namedWindow("Good Features to Track");
-	cv::imshow("Good Features to Track",image);
+	cv::namedWindow("GFTT");
+	cv::imshow("GFTT",image);
 
 	// Read input image
 	image= cv::imread("church01.jpg",0);
@@ -132,8 +132,8 @@ int main()
 	std::cout << "Number of keypoints (FAST): " << keypoints.size() << std::endl; 
 
     // Display the corners
-	cv::namedWindow("FAST Features");
-	cv::imshow("FAST Features",image);
+	cv::namedWindow("FAST");
+	cv::imshow("FAST",image);
 
 	// FAST feature without non-max suppression
 	// Read input image
@@ -199,19 +199,19 @@ int main()
 
 	keypoints.clear();
 	cv::PyramidAdaptedFeatureDetector fastP(
-		new cv::FastFeatureDetector(80), // the feature detector
+		new cv::FastFeatureDetector(60), // the feature detector
 		3);    // number of levels
 
 	fastP.detect(image,keypoints);
 	std::cout << "keypoint: " << keypoints[1].class_id << " , " << keypoints[1].octave << " , " << keypoints[1].size << std::endl; 
-	std::cout << "keypoint: " << keypoints[111].class_id << " , " << keypoints[111].octave << " , " << keypoints[111].size << std::endl; 
+	std::cout << "keypoint: " << keypoints[11].class_id << " , " << keypoints[11].octave << " , " << keypoints[11].size << std::endl; 
 	std::cout << "keypoint: " << keypoints[keypoints.size()-2].class_id << " , " << keypoints[keypoints.size()-2].octave << " , " << keypoints[keypoints.size()-2].size << std::endl; 
 	
 	cv::drawKeypoints(image,keypoints,image,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("FAST Features (3 levels)");
-	cv::imshow("FAST Features (3 levels)",image);
+	cv::namedWindow("FAST (3 levels)");
+	cv::imshow("FAST (3 levels)",image);
 
 	// SURF:
 
@@ -225,7 +225,7 @@ int main()
     //	surf(image,cv::Mat(),keypoints);
 
 	// Construct the SURF feature detector object
-	cv::Ptr<cv::FeatureDetector> detector = new cv::SURF(3000.);
+	cv::Ptr<cv::FeatureDetector> detector = new cv::SURF(2000.);
 	// Detect the SURF features
 	detector->detect(image,keypoints);
 	
@@ -233,8 +233,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("SURF Features");
-	cv::imshow("SURF Features",featureImage);
+	cv::namedWindow("SURF");
+	cv::imshow("SURF",featureImage);
 
 	std::cout << "Number of SURF keypoints: " << keypoints.size() << std::endl; 
 
@@ -247,8 +247,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("SURF Features at another scale");
-	cv::imshow("SURF Features at another scale",featureImage);
+	cv::namedWindow("SURF (2)");
+	cv::imshow("SURF (2)",featureImage);
 
 	// SIFT:
 
@@ -265,8 +265,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("SIFT Features");
-	cv::imshow("SIFT Features",featureImage);
+	cv::namedWindow("SIFT");
+	cv::imshow("SIFT",featureImage);
 
 	std::cout << "Number of SIFT keypoints: " << keypoints.size() << std::endl; 
 
@@ -285,8 +285,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("BRISK Features");
-	cv::imshow("BRISK Features",featureImage);
+	cv::namedWindow("BRISK");
+	cv::imshow("BRISK",featureImage);
 
 	// Construct another BRISK feature detector object
 	detector = new cv::BRISK(
@@ -312,7 +312,7 @@ int main()
 	keypoints.clear();
 
 	// Construct the ORB feature detector object
-	detector = new cv::ORB(200, // total number of keypoints
+	detector = new cv::ORB(75, // total number of keypoints
 		                   1.2, // scale factor between layers
 						   8);  // number of layers in pyramid
 	// Detect the ORB features
@@ -321,8 +321,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("ORB Features");
-	cv::imshow("ORB Features",featureImage);
+	cv::namedWindow("ORB");
+	cv::imshow("ORB",featureImage);
 
 	std::cout << "Number of ORB keypoints: " << keypoints.size() << std::endl; 
 

@@ -130,7 +130,7 @@ class HarrisDetector {
 	  }
 
 	  // Draw circles at feature point locations on an image
-	  void drawOnImage(cv::Mat &image, const std::vector<cv::Point> &points, cv::Scalar color= cv::Scalar(255,255,255), int radius=3, int thickness=2) {
+	  void drawOnImage(cv::Mat &image, const std::vector<cv::Point> &points, cv::Scalar color= cv::Scalar(255,255,255), int radius=3, int thickness=1) {
 
 		  std::vector<cv::Point>::const_iterator it= points.begin();
 
