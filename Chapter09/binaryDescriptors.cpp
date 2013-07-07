@@ -38,12 +38,127 @@ int main()
 	std::vector<cv::KeyPoint> keypoints2;
 
 	// 3. Define feature detector
-	cv::FastFeatureDetector fastDet(80);
+	// Construct the SURF feature detector object
+	cv::Ptr<cv::FeatureDetector> detector = new cv::SURF(2000.);
 
 	// 4. Keypoint detection
-	fastDet.detect(image1,keypoints1);
-	fastDet.detect(image2,keypoints2);
+	// Detect the SURF features
+	detector->detect(image1,keypoints1);
+	detector->detect(image2,keypoints2);
 
+	// Draw feature points
+	cv::Mat featureImage;
+	cv::drawKeypoints(image1,keypoints1,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // Display the corners
+	cv::namedWindow("SURF");
+	cv::imshow("SURF",featureImage);
+
+	std::cout << "Number of SURF keypoints (image 1): " << keypoints1.size() << std::endl; 
+	std::cout << "Number of SURF keypoints (image 2): " << keypoints2.size() << std::endl; 
+
+	// SURF includes both the detector and descriptor extractor
+	cv::Ptr<cv::DescriptorExtractor> descriptor = detector;
+
+	// 5. Extract the descriptor
+    cv::Mat descriptors1;
+    cv::Mat descriptors2;
+    descriptor->compute(image1,keypoints1,descriptors1);
+    descriptor->compute(image2,keypoints2,descriptors2);
+
+   // Construction of the matcher 
+   cv::BFMatcher matcher(cv::NORM_L2);
+   // Match the two image descriptors
+   std::vector<cv::DMatch> matches;
+   matcher.match(descriptors1,descriptors2, matches);
+
+   // draw matches
+   cv::Mat imageMatches;
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches,            // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255)); // color of the lines
+
+    // Display the image of matches
+	cv::namedWindow("Matches");
+	cv::imshow("Matches",imageMatches);
+
+	std::cout << "Number of matches: " << matches.size() << std::endl; 
+
+   // Construction of the matcher with crosscheck 
+   cv::BFMatcher matcher2(cv::NORM_L2,true);
+   // Match the two image descriptors
+   matcher2.match(descriptors1,descriptors2, matches);
+
+   // draw matches
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches,            // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255)); // color of the lines
+
+   // Display the image of matches
+   cv::namedWindow("Matches (with crosscheck)");
+   cv::imshow("Matches (with crosscheck)",imageMatches);
+
+   std::cout << "Number of matches (crosscheck): " << matches.size() << std::endl; 
+
+   // SIFT
+   // 3. Define feature detector
+	 
+   // Construct the SURF feature detector object
+   detector = new cv::SIFT();
+
+	// 4. Keypoint detection
+	// Detect the SURF features
+	detector->detect(image1,keypoints1);
+	detector->detect(image2,keypoints2);
+
+	// Draw feature points
+	cv::drawKeypoints(image1,keypoints1,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // Display the corners
+	cv::namedWindow("SIFT");
+	cv::imshow("SIFT",featureImage);
+
+	std::cout << "Number of SIFT keypoints (image 1): " << keypoints1.size() << std::endl; 
+	std::cout << "Number of SIFT keypoints (image 2): " << keypoints2.size() << std::endl; 
+
+    // Display the image of matches
+	cv::namedWindow("Keypoints (image 1)");
+	cv::imshow("Keypoints (image 1)",image1);
+
+	// SIFT includes both the detector and descriptor extractor
+	descriptor = detector;
+
+	// 5. Extract the descriptor
+    descriptor->compute(image1,keypoints1,descriptors1);
+    descriptor->compute(image2,keypoints2,descriptors2);
+
+   // Match the two image descriptors
+   matcher2.match(descriptors1,descriptors2, matches);
+
+   // draw matches
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches,            // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255)); // color of the lines
+
+    // Display the image of matches
+	cv::namedWindow("SIFT Matches");
+	cv::imshow("SIFT Matches",imageMatches);
+
+	std::cout << "Number of matches: " << matches.size() << std::endl; 
+
+   cv::waitKey();
+   return 0;
+}
+/*
 	// 5. Define a neighborhood
 	cv::Rect neighbors(0,0,11,11); // 11x11
 	cv::Mat patch1;
@@ -170,6 +285,3 @@ int main()
 	cv::namedWindow("MSER Features");
 	cv::imshow("MSER Features",featureImage);
 	*/
-	cv::waitKey();
-	return 0;
-}
