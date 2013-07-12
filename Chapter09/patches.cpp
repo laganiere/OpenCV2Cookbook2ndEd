@@ -44,6 +44,9 @@ int main()
 	fastDet.detect(image1,keypoints1);
 	fastDet.detect(image2,keypoints2);
 
+	std::cout << "Number of keypoints (image 1): " << keypoints1.size() << std::endl; 
+	std::cout << "Number of keypoints (image 2): " << keypoints2.size() << std::endl; 
+
 	// 5. Define a square neighborhood
 	cv::Rect neighbors(0,0,11,11); // 11x11
 	cv::Mat patch1;
@@ -103,18 +106,22 @@ int main()
 		matches.push_back(bestMatch);
 	}
 
-	// extract the 25 best matches
-	std::nth_element(matches.begin(),matches.begin()+25,matches.end());
-	matches.erase(matches.begin()+25,matches.end());
+	std::cout << "Number of matches: " << matches.size() << std::endl; 
+
+	// extract the 50 best matches
+	std::nth_element(matches.begin(),matches.begin()+50,matches.end());
+	matches.erase(matches.begin()+50,matches.end());
+
+	std::cout << "Number of matches (after): " << matches.size() << std::endl; 
 
 	// Draw the matching results
 	cv::Mat matchImage;
 	cv::drawMatches(image1,keypoints1, // first image
-                   image2,keypoints2, // second image
-                   matches,     // vector of matches
-                   matchImage,  // produced image
-	               cv::Scalar(255,255,255),  // line color
-				   cv::Scalar(255,255,255)); // point color
+                    image2,keypoints2, // second image
+                    matches,     // vector of matches
+                    matchImage,  // produced image
+	                cv::Scalar(255,255,255),  // line color
+		  		    cv::Scalar(255,255,255)); // point color
 
     // Display the image of matches
 	cv::namedWindow("Matches");

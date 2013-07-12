@@ -39,7 +39,7 @@ int main()
 
 	// 3. Define feature detector
 	// Construct the SURF feature detector object
-	cv::Ptr<cv::FeatureDetector> detector = new cv::SURF(2000.);
+	cv::Ptr<cv::FeatureDetector> detector = new cv::SURF(1500);
 
 	// 4. Keypoint detection
 	// Detect the SURF features
@@ -79,16 +79,74 @@ int main()
      image2,keypoints2, // 2nd image and its keypoints
      matches,            // the matches
      imageMatches,      // the image produced
-     cv::Scalar(255,255,255)); // color of the lines
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
 
     // Display the image of matches
-	cv::namedWindow("Matches");
-	cv::imshow("Matches",imageMatches);
+	cv::namedWindow("SURF Matches");
+	cv::imshow("SURF Matches",imageMatches);
 
 	std::cout << "Number of matches: " << matches.size() << std::endl; 
 
+	// radius match
+	float maxDist= 0.4;
+    std::vector<std::vector<cv::DMatch>> matches2;
+	matcher.radiusMatch(descriptors1, descriptors2, matches2, 
+		                maxDist); // maximum acceptable distance
+	                              // between the 2 descriptors
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches2,          // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
+
+    int nmatches=0;
+	for (int i=0; i< matches2.size(); i++) nmatches+= matches2[i].size();
+	std::cout << "Number of matches (with min radius): " << nmatches << std::endl; 
+
+    // Display the image of matches
+	cv::namedWindow("SURF Matches (with min radius)");
+	cv::imshow("SURF Matches (with min radius)",imageMatches);
+
+	// perform the ratio test
+
+	// find the best two matches of each keypoint
+    matcher.knnMatch(descriptors1,descriptors2, matches2, 
+		             2); // find the k best matches
+	matches.clear();
+
+	// perform ratio test
+	double ratio= 0.85;
+	std::vector<std::vector<cv::DMatch>>::iterator it;
+	for (it= matches2.begin(); it!= matches2.end(); ++it) {
+
+		//   first best match/second best match
+		if ((*it)[0].distance/(*it)[1].distance < ratio) {
+			// it is an acceptable match
+			matches.push_back((*it)[0]);
+		}
+	}
+	// matches is the new match set
+
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches,            // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
+
+	std::cout << "Number of matches (after ratio test): " << matches.size() << std::endl; 
+
+    // Display the image of matches
+	cv::namedWindow("SURF Matches (ratio test)");
+	cv::imshow("SURF Matches (ratio test)",imageMatches);
+
    // Construction of the matcher with crosscheck 
-   cv::BFMatcher matcher2(cv::NORM_L2,true);
+   cv::BFMatcher matcher2(cv::NORM_L2, //distance measure
+	                     true);        // crosscheck flag
    // Match the two image descriptors
    matcher2.match(descriptors1,descriptors2, matches);
 
@@ -98,11 +156,12 @@ int main()
      image2,keypoints2, // 2nd image and its keypoints
      matches,            // the matches
      imageMatches,      // the image produced
-     cv::Scalar(255,255,255)); // color of the lines
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
 
    // Display the image of matches
-   cv::namedWindow("Matches (with crosscheck)");
-   cv::imshow("Matches (with crosscheck)",imageMatches);
+   cv::namedWindow("SURF Matches (with crosscheck)");
+   cv::imshow("SURF Matches (with crosscheck)",imageMatches);
 
    std::cout << "Number of matches (crosscheck): " << matches.size() << std::endl; 
 
@@ -113,7 +172,7 @@ int main()
    detector = new cv::SIFT();
 
 	// 4. Keypoint detection
-	// Detect the SURF features
+	// Detect the SIFT features
 	detector->detect(image1,keypoints1);
 	detector->detect(image2,keypoints2);
 
@@ -138,8 +197,12 @@ int main()
     descriptor->compute(image1,keypoints1,descriptors1);
     descriptor->compute(image2,keypoints2,descriptors2);
 
+	cv::Mat test(descriptors1.row(1));
+std::cout<<cv::sum(test)<<std::endl;
+std::cout<<cv::sum(descriptors1.row(8))<<std::endl;
+
    // Match the two image descriptors
-   matcher2.match(descriptors1,descriptors2, matches);
+   matcher.match(descriptors1,descriptors2, matches);
 
    // draw matches
    cv::drawMatches(
@@ -147,7 +210,8 @@ int main()
      image2,keypoints2, // 2nd image and its keypoints
      matches,            // the matches
      imageMatches,      // the image produced
-     cv::Scalar(255,255,255)); // color of the lines
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
 
     // Display the image of matches
 	cv::namedWindow("SIFT Matches");
@@ -155,133 +219,53 @@ int main()
 
 	std::cout << "Number of matches: " << matches.size() << std::endl; 
 
+	// scale-invariance test
+
+	// Read input images
+	image1= cv::imread("church01.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+	image2= cv::imread("church03.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+
+	// Keypoint detection
+	// Detect the SIFT features
+	detector->detect(image1,keypoints1);
+	detector->detect(image2,keypoints2);
+
+	// Draw feature points
+	cv::drawKeypoints(image1,keypoints1,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    // Display the corners
+	cv::namedWindow("SIFT");
+	cv::imshow("SIFT",featureImage);
+
+	std::cout << "Number of SIFT keypoints (image 1): " << keypoints1.size() << std::endl; 
+	std::cout << "Number of SIFT keypoints (image 2): " << keypoints2.size() << std::endl; 
+
+	// Extract the descriptor
+    descriptor->compute(image1,keypoints1,descriptors1);
+    descriptor->compute(image2,keypoints2,descriptors2);
+
+    // Match the two image descriptors
+    matcher.match(descriptors1,descriptors2, matches);
+
+	// extract the 50 best matches
+	std::nth_element(matches.begin(),matches.begin()+50,matches.end());
+	matches.erase(matches.begin()+50,matches.end());
+
+   // draw matches
+   cv::drawMatches(
+     image1,keypoints1, // 1st image and its keypoints
+     image2,keypoints2, // 2nd image and its keypoints
+     matches,            // the matches
+     imageMatches,      // the image produced
+     cv::Scalar(255,255,255),  // color of lines
+     cv::Scalar(255,255,255)); // color of points
+
+    // Display the image of matches
+	cv::namedWindow("multi-scale SIFT Matches");
+	cv::imshow("multi-scale SIFT Matches",imageMatches);
+
+	std::cout << "Number of matches: " << matches.size() << std::endl; 
+
    cv::waitKey();
    return 0;
 }
-/*
-	// 5. Define a neighborhood
-	cv::Rect neighbors(0,0,11,11); // 11x11
-	cv::Mat patch1;
-	cv::Mat patch2;
-
-	// 6. Forall keypoints in first image
-	//    find best match in second image
-	cv::Mat result;
-	std::vector<cv::DMatch> matches;
-
-	//for all keypoints in image 1
-	for (int i=0; i<keypoints1.size(); i++) {
-	
-		// define image patch
-		neighbors.x= keypoints1[i].pt.x-5;
-		neighbors.y= keypoints1[i].pt.y-5;
-
-		// if neighborhood of points outside image, then continue with next point
-		if (neighbors.x<0 || neighbors.y<0 || 
-			neighbors.x+11 >= image1.cols || neighbors.y+11 >= image1.rows)
-			continue;
-
-		//patch in image 1
-		patch1= image1(neighbors);
-
-		// reset best correlation value;
-		cv::DMatch bestMatch;
-
-		//for all keypoints in image 2
-	    for (int j=0; j<keypoints2.size(); j++) {
-
-			// define image patch
-			neighbors.x= keypoints2[j].pt.x-5;
-			neighbors.y= keypoints2[j].pt.y-5;
-
-			// if neighborhood of points outside image, then continue with next point
-			if (neighbors.x<0 || neighbors.y<0 || 
-				neighbors.x+11 >= image2.cols || neighbors.y+11 >= image2.rows)
-				continue;
-
-			// patch in image 2
-			patch2= image2(neighbors);
-
-			// match the two patches
-			cv::matchTemplate(patch1,patch2,result,CV_TM_SQDIFF);
-
-			// check if it is a best match
-			if (result.at<float>(0,0) < bestMatch.distance) {
-
-				bestMatch.distance= result.at<float>(0,0);
-				bestMatch.queryIdx= i;
-				bestMatch.trainIdx= j;
-			}
-		}
-
-		// add the best match
-		matches.push_back(bestMatch);
-	}
-
-	// extract the 25 best matches
-	std::nth_element(matches.begin(),matches.begin()+25,matches.end());
-	matches.erase(matches.begin()+25,matches.end());
-
-	// Draw the matching results
-	cv::Mat matchImage;
-	cv::drawMatches(image1,keypoints1,image2,keypoints2,matches,matchImage);
-
-    // Display the image of matches
-	cv::namedWindow("Matches");
-	cv::imshow("Matches",matchImage);
-
-	/*
-	// Read input image
-	image= cv::imread("church03.jpg",0);
-
-	keypoints.clear();
-	// Construct the SURF feature detector object
-	cv::SurfFeatureDetector surf(2500);
-	// Detect the SURF features
-	surf.detect(image,keypoints);
-	
-	cv::Mat featureImage;
-	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-    // Display the corners
-	cv::namedWindow("SURF Features");
-	cv::imshow("SURF Features",featureImage);
-
-	// Read input image
-	image= cv::imread("church01.jpg",0);
-
-	keypoints.clear();
-	// Construct the SURF feature detector object
-	cv::SiftFeatureDetector sift(
-		0.03,  // feature threshold
-		10.);  // threshold to reduce
-	           // sensitivity to lines
-
-	// Detect the SURF features
-	sift.detect(image,keypoints);
-	
-	cv::drawKeypoints(image,keypoints,featureImage,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-    // Display the corners
-	cv::namedWindow("SIFT Features");
-	cv::imshow("SIFT Features",featureImage);
-
-	// Read input image
-	image= cv::imread("church01.jpg",0);
-
-	keypoints.clear();
-
-	cv::MserFeatureDetector mser;
-	mser.detect(image,keypoints);
-	
-	// Draw the keypoints with scale and orientation information
-	cv::drawKeypoints(image,		// original image
-		keypoints,					// vector of keypoints
-		featureImage,				// the resulting image
-		cv::Scalar(255,255,255),	// color of the points
-		cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //drawing flag
-
-    // Display the corners
-	cv::namedWindow("MSER Features");
-	cv::imshow("MSER Features",featureImage);
-	*/
