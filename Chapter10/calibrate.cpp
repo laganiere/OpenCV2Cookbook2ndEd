@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 9 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   This file contains material supporting chapter 10 of the cookbook:  
+   Computer Vision Programming using the OpenCV Library 
+   Second Edition 
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -12,7 +13,7 @@
    The author disclaims all warranties with regard to this software, any use, 
    and any consequent failure, is purely the responsibility of the user.
  
-   Copyright (C) 2010-2011 Robert Laganiere, www.laganiere.name
+   Copyright (C) 2013 Robert Laganiere, www.laganiere.name
 \*------------------------------------------------------------------------------------------*/
 
 #include <iostream>
@@ -24,8 +25,6 @@
 #include <opencv2/features2d/features2d.hpp>
 
 #include "CameraCalibrator.h"
-
-
 
 	// Applies a lookup table transforming an input image into a 1-channel image
 	cv::Mat applyLookUp(const cv::Mat& image, const cv::MatND& lookup) {
@@ -48,8 +47,7 @@
 
 int main()
 {
-
-	cv::namedWindow("Image");
+	cv::namedWindow("Board Image");
 	cv::Mat image;
 	std::vector<std::string> filelist;
 
@@ -62,7 +60,7 @@ int main()
 
 		filelist.push_back(str.str());
 		image= cv::imread(str.str(),0);
-		cv::imshow("Image",image);
+		cv::imshow("Board Image",image);
 	
 		 cv::waitKey(100);
 	}
@@ -73,13 +71,14 @@ int main()
 	cv::Size boardSize(6,4);
 	cameraCalibrator.addChessboardPoints(
 		filelist,	// filenames of chessboard image
-		boardSize);	// size of chessboard
-		// calibrate the camera
+		boardSize, "Detected points");	// size of chessboard
+
+	// calibrate the camera
     //	cameraCalibrator.setCalibrationFlag(true,true);
 	cameraCalibrator.calibrate(image.size());
 
     // Image Undistortion
-    image = cv::imread(filelist[6]);
+    image = cv::imread(filelist[6],0);
 	cv::Mat uImage= cameraCalibrator.remap(image);
 
 	// display camera matrix
@@ -94,6 +93,8 @@ int main()
 	cv::namedWindow("Undistorted Image");
     cv::imshow("Undistorted Image", uImage);
 
+	cv::waitKey();
+	return 0;
 
 	// Create an image inversion table
 	int dim(256);

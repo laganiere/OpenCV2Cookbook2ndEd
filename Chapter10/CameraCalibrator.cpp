@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 9 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   This file contains material supporting chapter 10 of the cookbook:  
+   Computer Vision Programming using the OpenCV Library 
+   Second Edition 
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -12,16 +13,17 @@
    The author disclaims all warranties with regard to this software, any use, 
    and any consequent failure, is purely the responsibility of the user.
  
-   Copyright (C) 2010-2011 Robert Laganiere, www.laganiere.name
+   Copyright (C) 2013 Robert Laganiere, www.laganiere.name
 \*------------------------------------------------------------------------------------------*/
 
 #include "CameraCalibrator.h"
 
 // Open chessboard images and extract corner points
 int CameraCalibrator::addChessboardPoints(
-         const std::vector<std::string>& filelist, 
-         cv::Size & boardSize) {
-
+         const std::vector<std::string>& filelist, // list of filenames containing board images
+         cv::Size & boardSize,                     // size of the board
+		 std::string windowName) {                 // name of window to display results
+			                                       // if null, no display shown
 	// the points on the chessboard
     std::vector<cv::Point2f> imageCorners;
     std::vector<cv::Point3f> objectCorners;
@@ -67,10 +69,13 @@ int CameraCalibrator::addChessboardPoints(
             successes++;
           }
 
-        //Draw the corners
-        cv::drawChessboardCorners(image, boardSize, imageCorners, found);
-        cv::imshow("Corners on Chessboard", image);
-        cv::waitKey(100);
+		if (windowName.length()>0) {
+        
+			//Draw the corners
+			cv::drawChessboardCorners(image, boardSize, imageCorners, found);
+			cv::imshow(windowName, image);
+			cv::waitKey(100);
+		}
     }
 
 	return successes;
@@ -120,8 +125,8 @@ cv::Mat CameraCalibrator::remap(const cv::Mat &image) {
             distCoeffs,    // computed distortion matrix
             cv::Mat(),     // optional rectification (none) 
 			cv::Mat(),     // camera matrix to generate undistorted
-			cv::Size(640,480),
-//            image.size(),  // size of undistorted
+//			cv::Size(640,480),
+            image.size(),  // size of undistorted
             CV_32FC1,      // type of output map
             map1, map2);   // the x and y mapping functions
 
