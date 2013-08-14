@@ -23,7 +23,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include "matcher.h"
+#include <opencv2/nonfree/features2d.hpp>
 
 int main()
 {
@@ -38,19 +38,33 @@ int main()
 	cv::imshow("Image 1",image1);
 	cv::namedWindow("Image 2");
 	cv::imshow("Image 2",image2);
+	
+	// 0. Construction of the detector and descriptor
+	// for example SURF
+	cv::Ptr<cv::FeatureDetector> detector= new cv::SURF();
+	cv::Ptr<cv::DescriptorExtractor> extractor= detector;
 
-	// Prepare the matcher
-	RobustMatcher rmatcher;
-	rmatcher.setConfidenceLevel(0.98);
-	rmatcher.setMinDistanceToEpipolar(1.0);
-	rmatcher.setRatio(0.65f);
-	cv::Ptr<cv::FeatureDetector> pfd= new cv::SurfFeatureDetector(10); 
-	rmatcher.setFeatureDetector(pfd);
+	// 1. Detection of the feature points
+	std::vector<cv::KeyPoint> keypoints1;
+	std::vector<cv::KeyPoint> keypoints2;
+	detector->detect(image1,keypoints1);
+	detector->detect(image2,keypoints2);
 
-	// Match the two images
+	std::cout << "Number of feature points (1): " << keypoints1.size() << std::endl;
+	std::cout << "Number of feature points (2): " << keypoints2.size() << std::endl;
+
+	// 2. Extraction of the feature descriptors
+	cv::Mat descriptors1, descriptors2;
+	extractor->compute(image1,keypoints1,descriptors1);
+	extractor->compute(image2,keypoints2,descriptors2);
+
+	// 3. Match the two image descriptors
+   
+	// Construction of the matcher with crosscheck 
+	cv::BFMatcher matcher(cv::NORM_L2, true);                            
+	// matching
 	std::vector<cv::DMatch> matches;
-	std::vector<cv::KeyPoint> keypoints1, keypoints2;
-	cv::Mat fundemental= rmatcher.match(image1,image2,matches, keypoints1, keypoints2);
+	matcher.match(descriptors1,descriptors2,matches);
 
 	// draw the matches
 	cv::Mat imageMatches;
@@ -58,7 +72,10 @@ int main()
 		            image2,keypoints2,  // 2nd image and its keypoints
 					matches,			// the matches
 					imageMatches,		// the image produced
-					cv::Scalar(255,255,255)); // color of the lines
+					cv::Scalar(255,255,255),  // color of the lines
+					cv::Scalar(255,255,255),  // color of the keypoints
+					std::vector<char>(),
+					2); 
 	cv::namedWindow("Matches");
 	cv::imshow("Matches",imageMatches);
 	
@@ -94,7 +111,7 @@ int main()
 
 		// draw a circle at each inlier location
 		if (*itIn) 
- 			cv::circle(image1,*itPts,3,cv::Scalar(255,255,255),2);
+ 			cv::circle(image1,*itPts,3,cv::Scalar(255,255,255));
 		
 		++itPts;
 		++itIn;
@@ -106,7 +123,7 @@ int main()
 
 		// draw a circle at each inlier location
 		if (*itIn) 
-			cv::circle(image2,*itPts,3,cv::Scalar(255,255,255),2);
+			cv::circle(image2,*itPts,3,cv::Scalar(255,255,255));
 		
 		++itPts;
 		++itIn;
@@ -130,8 +147,8 @@ int main()
 	image2.copyTo(half);
 
     // Display the warp image
-	cv::namedWindow("After warping");
-	cv::imshow("After warping",result);
+	cv::namedWindow("Image mosaic");
+	cv::imshow("Image mosaic",result);
 
 	cv::waitKey();
 	return 0;
