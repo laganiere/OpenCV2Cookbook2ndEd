@@ -86,7 +86,7 @@ int main()
 	
 	// Draw the epipolar lines
 	std::vector<cv::Vec3f> lines1; 
-	cv::computeCorrespondEpilines(cv::Mat(points1),1,fundemental,lines1);
+	cv::computeCorrespondEpilines(points1,1,fundemental,lines1);
 		
 	for (std::vector<cv::Vec3f>::const_iterator it= lines1.begin();
 			 it!=lines1.end(); ++it) {
@@ -97,7 +97,7 @@ int main()
 	}
 
 	std::vector<cv::Vec3f> lines2; 
-	cv::computeCorrespondEpilines(cv::Mat(points2),2,fundemental,lines2);
+	cv::computeCorrespondEpilines(points2,2,fundemental,lines2);
 	
 	for (std::vector<cv::Vec3f>::const_iterator it= lines2.begin();
 		     it!=lines2.end(); ++it) {

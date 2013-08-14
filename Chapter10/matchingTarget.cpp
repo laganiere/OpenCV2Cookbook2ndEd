@@ -24,39 +24,46 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
-#include "robustMatcher.h"
+#include "targetMatcher.h"
 
 int main()
 {
-	// to be able to construct SURF and SIFT
-	cv::initModule_nonfree();
-
 	// Read input images
-	cv::Mat image1= cv::imread("church01.jpg",0);
-	cv::Mat image2= cv::imread("church03.jpg",0);
-	if (!image1.data || !image2.data)
+	cv::Mat target= cv::imread("cookbook1.bmp",0);
+	cv::Mat image= cv::imread("book.jpg",0);
+	if (!target.data || !image.data)
 		return 0; 
 
     // Display the images
-	cv::namedWindow("Right Image");
-	cv::imshow("Right Image",image1);
-	cv::namedWindow("Left Image");
-	cv::imshow("Left Image",image2);
+	cv::namedWindow("Target");
+	cv::imshow("Target",target);
 
-	// Prepare the matcher (with default parameters)
-	RobustMatcher rmatcher("SURF");
+	// Prepare the matcher 
+	TargetMatcher tmatcher("FAST","FREAK");
+	tmatcher.setNormType(cv::NORM_HAMMING);
 
-	// Match the two images
+	// definition of the output data
 	std::vector<cv::DMatch> matches;
-
 	std::vector<cv::KeyPoint> keypoints1, keypoints2;
-	cv::Mat fundemental= rmatcher.match(image1,image2,matches, 
-		keypoints1, keypoints2,CROSSCHECK);
+	std::vector<cv::Point2f> corners;
+	// the reference image
+	tmatcher.setTarget(target); 
+	// match image with target
+	tmatcher.detectTarget(image,corners,matches,keypoints1,keypoints2);
+	// draw the target corners on the image
+	cv::Point pt= cv::Point(corners[0]);
+	cv::line(image,cv::Point(corners[0]),cv::Point(corners[1]),cv::Scalar(255,255,255),3);
+	cv::line(image,cv::Point(corners[1]),cv::Point(corners[2]),cv::Scalar(255,255,255),3);
+	cv::line(image,cv::Point(corners[2]),cv::Point(corners[3]),cv::Scalar(255,255,255),3);
+	cv::line(image,cv::Point(corners[3]),cv::Point(corners[0]),cv::Scalar(255,255,255),3);
+
+	cv::namedWindow("Image");
+	cv::imshow("Image",image);
 
 	// draw the matches
 	cv::Mat imageMatches;
-	cv::drawMatches(image1,keypoints1,  // 1st image and its keypoints
-		            image2,keypoints2,  // 2nd image and its keypoints
+	cv::drawMatches(target,keypoints1,  // 1st image and its keypoints
+		            image,keypoints2,  // 2nd image and its keypoints
 					matches,			// the matches
 					imageMatches,		// the image produced
 					cv::Scalar(255,255,255),  // color of the lines
@@ -65,7 +72,9 @@ int main()
 					2); 
 	cv::namedWindow("Matches");
 	cv::imshow("Matches",imageMatches);
-	
+
+
+/*	
 	// Convert keypoints into Point2f	
 	std::vector<cv::Point2f> points1, points2;
 	
@@ -112,7 +121,7 @@ int main()
 	cv::imshow("Right Image Epilines (RANSAC)",image1);
 	cv::namedWindow("Left Image Epilines (RANSAC)");
 	cv::imshow("Left Image Epilines (RANSAC)",image2);
-
+*/
 	cv::waitKey();
 	return 0;
 }

@@ -99,7 +99,7 @@ int main()
 	// Find the homography between image 1 and image 2
 	std::vector<uchar> inliers(points1.size(),0);
 	cv::Mat homography= cv::findHomography(
-		cv::Mat(points1),cv::Mat(points2), // corresponding points
+		points1,points2, // corresponding points
 		inliers,	// outputed inliers matches 
 		CV_RANSAC,	// RANSAC method
 		1.);	    // max distance to reprojection point
