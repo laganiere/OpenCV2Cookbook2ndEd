@@ -111,6 +111,9 @@ int main()
 	// Set the frame processor callback function
 	processor.setFrameProcessor(canny);
 
+	// output a video
+	processor.setOutput("bikeCanny.avi",-1,15);
+
 	// Start the process
 	processor.run();
 

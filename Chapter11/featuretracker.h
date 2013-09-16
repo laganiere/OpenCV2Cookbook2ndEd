@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
    This file contains material supporting chapter 10 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   Computer Vision Programming using the OpenCV Library 
+   Second Edition 
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -12,7 +13,7 @@
    The author disclaims all warranties with regard to this software, any use, 
    and any consequent failure, is purely the responsibility of the user.
  
-   Copyright (C) 2010-2011 Robert Laganiere, www.laganiere.name
+   Copyright (C) 2013 Robert Laganiere, www.laganiere.name
 \*------------------------------------------------------------------------------------------*/
 
 #if !defined FTRACKER
@@ -117,6 +118,7 @@ class FeatureTracker : public FrameProcessor {
 	}
 
 	// determine which tracked point should be accepted
+	// here we keep only moving points
 	bool acceptTrackedPoint(int i) {
 
 		return status[i] &&
