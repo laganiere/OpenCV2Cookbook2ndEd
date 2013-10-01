@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 10 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   This file contains material supporting chapter 11 of the cookbook:  
+   Computer Vision Programming using the OpenCV Library 
+   Second Edition 
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -12,7 +13,7 @@
    The author disclaims all warranties with regard to this software, any use, 
    and any consequent failure, is purely the responsibility of the user.
  
-   Copyright (C) 2010-2011 Robert Laganiere, www.laganiere.name
+   Copyright (C) 2013 Robert Laganiere, www.laganiere.name
 \*------------------------------------------------------------------------------------------*/
 
 #if !defined BGFGSeg
@@ -28,7 +29,7 @@ class BGFGSegmentor : public FrameProcessor {
 	
 	cv::Mat gray;			// current gray-level image
 	cv::Mat background;		// accumulated background
-	cv::Mat backImage;		// background image
+	cv::Mat backImage;		// current background image
 	cv::Mat foreground;		// foreground image
 	double learningRate;    // learning rate in background accumulation
 	int threshold;			// threshold for foreground extraction
@@ -69,7 +70,10 @@ class BGFGSegmentor : public FrameProcessor {
 		cv::threshold(foreground,output,threshold,255,cv::THRESH_BINARY_INV);
 
 		// accumulate background
-		cv::accumulateWeighted(gray, background, learningRate, output);
+		cv::accumulateWeighted(gray, background, 
+			                   // alpha*gray + (1-alpha)*background
+			                   learningRate,  // alpha 
+							   output);       // mask
 	}
 };
 

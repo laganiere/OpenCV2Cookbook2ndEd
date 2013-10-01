@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 10 of the cookbook:  
+   This file contains material supporting chapter 11 of the cookbook:  
    Computer Vision Programming using the OpenCV Library 
    Second Edition 
    by Robert Laganiere, Packt Publishing, 2013.

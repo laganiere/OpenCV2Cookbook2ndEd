@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 10 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   This file contains material supporting chapter 11 of the cookbook:  
+   Computer Vision Programming using the OpenCV Library 
+   Second Edition 
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -12,7 +13,7 @@
    The author disclaims all warranties with regard to this software, any use, 
    and any consequent failure, is purely the responsibility of the user.
  
-   Copyright (C) 2010-2011 Robert Laganiere, www.laganiere.name
+   Copyright (C) 2013 Robert Laganiere, www.laganiere.name
 \*------------------------------------------------------------------------------------------*/
 
 #include <iostream>
@@ -27,7 +28,7 @@
 int main()
 {
 	// Open the video file
-    cv::VideoCapture capture("../bike.avi");
+    cv::VideoCapture capture("bike.avi");
 	// check if video successfully opened
 	if (!capture.isOpened())
 		return 0;
@@ -36,8 +37,11 @@ int main()
 	cv::Mat frame; 
 	// foreground binary image
 	cv::Mat foreground;
+	// background image
+	cv::Mat background;
 
 	cv::namedWindow("Extracted Foreground");
+	cv::namedWindow("Background Image");
 
 	// The Mixture of Gaussian object
 	// used with all default parameters
@@ -58,8 +62,10 @@ int main()
 		// Complement the image
 		cv::threshold(foreground,foreground,128,255,cv::THRESH_BINARY_INV);
 
-		// show foreground
+		// show foreground and background
 		cv::imshow("Extracted Foreground",foreground);
+		// mog.getBackgroundImage(background);
+		// cv::imshow("Background Image", background);
 
 		// introduce a delay
 		// or press key to stop
@@ -77,7 +83,7 @@ int main()
 	segmentor.setThreshold(25);
 
 	// Open video file
-	processor.setInput("../bike.avi");
+	processor.setInput("bike.avi");
 
 	// set frame processor
 	processor.setFrameProcessor(&segmentor);
