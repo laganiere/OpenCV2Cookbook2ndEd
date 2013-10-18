@@ -23,7 +23,7 @@
 
 // Test 0
 // using .ptr and []
-void colorReduce0(cv::Mat &image, int div=64) {
+void colorReduce0(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -47,7 +47,7 @@ void colorReduce0(cv::Mat &image, int div=64) {
 
 // Test 1
 // using .ptr and * ++ 
-void colorReduce1(cv::Mat &image, int div=64) {
+void colorReduce1(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -70,7 +70,7 @@ void colorReduce1(cv::Mat &image, int div=64) {
 
 // Test 2
 // using .ptr and * ++ and modulo
-void colorReduce2(cv::Mat &image, int div=64) {
+void colorReduce2(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -95,7 +95,7 @@ void colorReduce2(cv::Mat &image, int div=64) {
 
 // Test 3
 // using .ptr and * ++ and bitwise
-void colorReduce3(cv::Mat &image, uchar div=64) {
+void colorReduce3(cv::Mat image, uchar div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -124,7 +124,7 @@ void colorReduce3(cv::Mat &image, uchar div=64) {
 
 // Test 4
 // direct pointer arithmetic
-void colorReduce4(cv::Mat &image, int div=64) {
+void colorReduce4(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -155,7 +155,7 @@ void colorReduce4(cv::Mat &image, int div=64) {
 
 // Test 5
 // using .ptr and * ++ and bitwise with image.cols * image.channels()
-void colorReduce5(cv::Mat &image, int div=64) {
+void colorReduce5(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
@@ -181,7 +181,7 @@ void colorReduce5(cv::Mat &image, int div=64) {
 
 // Test 6
 // using .ptr and * ++ and bitwise (continuous)
-void colorReduce6(cv::Mat &image, int div=64) {
+void colorReduce6(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols * image.channels(); // total number of elements per line
@@ -216,7 +216,7 @@ void colorReduce6(cv::Mat &image, int div=64) {
 
 // Test 7
 // using .ptr and * ++ and bitwise (continuous+reshape)
-void colorReduce7(cv::Mat &image, int div=64) {
+void colorReduce7(cv::Mat image, int div=64) {
 
       if (image.isContinuous()) {
         // no padded pixels
@@ -251,7 +251,7 @@ void colorReduce7(cv::Mat &image, int div=64) {
 
 // Test 8
 // using Mat_ iterator 
-void colorReduce8(cv::Mat &image, int div=64) {
+void colorReduce8(cv::Mat image, int div=64) {
 
 	  // get iterators
 	  cv::Mat_<cv::Vec3b>::iterator it= image.begin<cv::Vec3b>();
@@ -269,9 +269,28 @@ void colorReduce8(cv::Mat &image, int div=64) {
 	  }
 }
 
+// Test 8b
+// using Mat_ iterator and Vec3b operator
+void colorReduce8b(cv::Mat image, int div=64) {
+
+	  // get iterators
+	  cv::Mat_<cv::Vec3b>::iterator it= image.begin<cv::Vec3b>();
+	  cv::Mat_<cv::Vec3b>::iterator itend= image.end<cv::Vec3b>();
+
+ 	  const cv::Vec3b offset(div/2,div/2,div/2);
+	
+	  for ( ; it!= itend; ++it) {
+        
+		// process each pixel ---------------------
+
+		*it= *it/div*div + offset;
+        // end of pixel processing ----------------
+	  }
+}
+
 // Test 9
 // using Mat_ iterator and bitwise
-void colorReduce9(cv::Mat &image, int div=64) {
+void colorReduce9(cv::Mat image, int div=64) {
 
 	  // div must be a power of 2
 	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
@@ -300,7 +319,7 @@ void colorReduce9(cv::Mat &image, int div=64) {
 
 // Test 10
 // using MatIterator_ 
-void colorReduce10(cv::Mat &image, int div=64) {
+void colorReduce10(cv::Mat image, int div=64) {
 
 	  // get iterators
 	  cv::Mat_<cv::Vec3b> cimage= image;
@@ -322,7 +341,7 @@ void colorReduce10(cv::Mat &image, int div=64) {
 
 // Test 11
 // using at method 
-void colorReduce11(cv::Mat &image, int div=64) {
+void colorReduce11(cv::Mat image, int div=64) {
 
 	  int nl= image.rows; // number of lines
 	  int nc= image.cols; // number of columns
@@ -376,7 +395,7 @@ void colorReduce12(const cv::Mat &image, // input image
 
 // Test 13
 // using overloaded operators
-void colorReduce13(cv::Mat &image, int div=64) {
+void colorReduce13(cv::Mat image, int div=64) {
 	
 	  int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
 	  // mask used to round the pixel value
@@ -388,7 +407,7 @@ void colorReduce13(cv::Mat &image, int div=64) {
 
 // Test 14
 // using look up table
-void colorReduce14(cv::Mat &image, int div=64) {
+void colorReduce14(cv::Mat image, int div=64) {
 	
 	  cv::Mat lookup(1,256,CV_8U);
 	    
@@ -401,8 +420,8 @@ void colorReduce14(cv::Mat &image, int div=64) {
 }
 
 
-#define NTESTS 15
-#define NITERATIONS 20
+#define NTESTS 16
+#define NITERATIONS 1
 
 int main()
 {
@@ -417,6 +436,7 @@ int main()
 	cv::Mat image6;
 	cv::Mat image7;
 	cv::Mat image8;
+	cv::Mat image8b;
 	cv::Mat image9;
 	cv::Mat image10;
 	cv::Mat image11;
@@ -424,6 +444,23 @@ int main()
 	cv::Mat image13;
 	cv::Mat image14;
 	cv::Mat result;
+
+	// read the image
+    cv::Mat image= cv::imread("boldt.jpg");
+
+
+    // time and process the image
+	const int64 start = cv::getTickCount();
+	colorReduce1(image,64);
+	//Elapsed time in seconds
+	double duration = (cv::getTickCount()-start)/cv::getTickFrequency();
+
+    // display the image
+	std::cout << "Duration= " << duration << "secs" <<std::endl;
+    cv::namedWindow("Image");
+    cv::imshow("Image",image);
+
+	cv::waitKey();
 
 	// timer values set to 0
 	for (int i=0; i<NTESTS; i++)
@@ -492,6 +529,12 @@ int main()
 		colorReduce8(image8);
 		t[8]+= cv::getTickCount()-tinit;
 
+		image8b= cv::imread("../image.jpg");
+		// using Mat_ iterator
+	    tinit= cv::getTickCount();
+		colorReduce8b(image8b);
+		t[15]+= cv::getTickCount()-tinit;
+
 		image9= cv::imread("../image.jpg");
 		// using Mat_ iterator and bitwise
 	    tinit= cv::getTickCount();
@@ -550,6 +593,8 @@ int main()
 	cv::imshow("Test 7",image7);
 	cv::namedWindow("Test 8");
 	cv::imshow("Test 8",image8);
+	cv::namedWindow("Test 8b");
+	cv::imshow("Test 8b",image8b);
 	cv::namedWindow("Test 9");
 	cv::imshow("Test 9",image9);
 	cv::namedWindow("Test 10");
@@ -574,6 +619,7 @@ int main()
 	std::cout << "6. using .ptr and * ++ and bitwise (continuous) =" << 1000.*t[6]/cv::getTickFrequency()/n << "ms" << std::endl;
 	std::cout << "7. using .ptr and * ++ and bitwise (continuous+reshape) =" << 1000.*t[7]/cv::getTickFrequency()/n << "ms" << std::endl;
 	std::cout << "8. using Mat_ iterator =" << 1000.*t[8]/cv::getTickFrequency()/n << "ms" << std::endl;
+	std::cout << "8. using Mat_ iterator and Vec3b op=" << 1000.*t[15]/cv::getTickFrequency()/n << "ms" << std::endl;
 	std::cout << "9. using Mat_ iterator and bitwise =" << 1000.*t[9]/cv::getTickFrequency()/n << "ms" << std::endl;
 	std::cout << "10. using MatIterator_ =" << 1000.*t[10]/cv::getTickFrequency()/n << "ms" << std::endl;	
 	std::cout << "11. using at =" << 1000.*t[11]/cv::getTickFrequency()/n << "ms" << std::endl;	

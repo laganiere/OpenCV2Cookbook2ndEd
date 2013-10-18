@@ -18,22 +18,23 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <stdlib.h> // for std::rand
 
-void salt(cv::Mat &image, int n) {
+void salt(cv::Mat image, int n) {
 
 	int i,j;
 	for (int k=0; k<n; k++) {
 
-		// rand() is the MFC random number generator
-		i= rand()%image.cols;
-		j= rand()%image.rows;
+		// rand() is the random number generator
+		i= std::rand()%image.cols;
+		j= std::rand()%image.rows;
 
 
-		if (image.channels() == 1) { // gray-level image
+		if (image.type() == CV_8UC1) { // gray-level image
 
 			image.at<uchar>(j,i)= 255; 
 
-		} else if (image.channels() == 3) { // color image
+		} else if (image.type() == CV_8UC3) { // color image
 
 			image.at<cv::Vec3b>(j,i)[0]= 255; 
 			image.at<cv::Vec3b>(j,i)[1]= 255; 
@@ -45,9 +46,13 @@ void salt(cv::Mat &image, int n) {
 // This is an extra version of the function
 // to illustrate the use of cv::Mat_
 // works only for a 1-channel image
-void salt2(cv::Mat &image, int n) {
+void salt2(cv::Mat image, int n) {
 
-	cv::Mat_<uchar>& im2= reinterpret_cast<cv::Mat_<uchar>&>(image);
+	// use image with a Mat_ template
+	cv::Mat_<uchar> im2(image);
+	
+//  or with references:
+//	cv::Mat_<uchar>& im2= reinterpret_cast<cv::Mat_<uchar>&>(image);
 
 	int i,j;
 	for (int k=0; k<n; k++) {
@@ -57,7 +62,7 @@ void salt2(cv::Mat &image, int n) {
 		j= rand()%image.rows;
 
 
-		if (im2.channels() == 1) { // gray-level image
+		if (im2.type() == CV_8UC1) { // gray-level image
 
 			im2(j,i)= 255; 
 
@@ -68,19 +73,22 @@ void salt2(cv::Mat &image, int n) {
 
 int main()
 {
-	srand(cv::getTickCount()); // init random number generator
+	// open the image
+	cv::Mat image= cv::imread("boldt.jpg",1);
 
-	cv::Mat image= cv::imread("boldt.jpg",0);
-
+	// call function to add noise
 	salt(image,3000);
 
+	// display result
 	cv::namedWindow("Image");
 	cv::imshow("Image",image);
 
+	// write on disk
 	cv::imwrite("salted.bmp",image);
 
 	cv::waitKey();
 
+	// test second version
 	image= cv::imread("boldt.jpg",0);
 	salt2(image,500);
 
