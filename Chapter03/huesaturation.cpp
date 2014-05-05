@@ -23,6 +23,47 @@
 #include <iostream>
 #include <vector>
 
+void detectHScolor(const cv::Mat& image,		// input image 
+	double minHue, double maxHue,	// Hue interval 
+	double minSat, double maxSat,	// saturation interval
+	cv::Mat& mask) {				// output mask
+
+	// convert into HSV space
+	cv::Mat hsv;
+	cv::cvtColor(image, hsv, CV_BGR2HSV);
+
+	// split the 3 channels into 3 images
+	std::vector<cv::Mat> channels;
+	cv::split(hsv, channels);
+	// channels[0] is the Hue
+	// channels[1] is the Saturation
+	// channels[2] is the Value
+
+	// Hue masking
+	cv::Mat mask1; // under maxHue
+	cv::threshold(channels[0], mask1, maxHue, 255, cv::THRESH_BINARY_INV);
+	cv::Mat mask2; // over minHue
+	cv::threshold(channels[0], mask2, minHue, 255, cv::THRESH_BINARY);
+
+	cv::Mat hueMask; // hue mask
+	if (minHue < maxHue)
+		hueMask = mask1 & mask2;
+	else // if interval crosses the zero-degree axis
+		hueMask = mask1 | mask2;
+
+	// Saturation masking
+	// under maxSat
+	cv::threshold(channels[1], mask1, maxSat, 255, cv::THRESH_BINARY_INV);
+	// over minSat
+	cv::threshold(channels[1], mask2, minSat, 255, cv::THRESH_BINARY);
+
+	cv::Mat satMask; // saturation mask
+	satMask = mask1 & mask2;
+
+	// combined mask
+	mask = hueMask&satMask;
+}
+
 int main()
 {
 	// read the image
@@ -99,23 +140,16 @@ int main()
 	cv::namedWindow("Original image");
 	cv::imshow("Original image",image);
 
-	// convert into HSV space
-	cv::cvtColor(image, hsv, CV_BGR2HSV);
+	// detect skin tone
+	cv::Mat mask;
+	detectHScolor(image, 
+		160, 10, // hue from 320 degrees to 20 degrees 
+		25, 166, // saturation from ~0.1 to 0.65
+		mask);
 
-	// split the 3 channels into 3 images
-	cv::split(hsv,channels);
-
-	// detection mask
-	cv::Mat mask1; // under 20 degrees
-	cv::threshold(channels[0],mask1,10,255,cv::THRESH_BINARY_INV);
-	cv::Mat mask2; // or over 320 degrees
-	cv::threshold(channels[0],mask2,160,255,cv::THRESH_BINARY);
-	cv::Mat mask= mask1 | mask2;
-
-	// use value channel to display result
-	cv::Mat detected;
-	detected= channels[2]&mask;
-	cv::namedWindow("Detection result");
+	// show masked image
+	cv::Mat detected(image.size(), CV_8UC3, cv::Scalar(0, 0, 0));
+	image.copyTo(detected, mask);
 	cv::imshow("Detection result",detected);
 
 	// A test comparing luminance and brightness

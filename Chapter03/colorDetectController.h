@@ -73,10 +73,7 @@ class ColorDetectController {
 
 		  image= cv::imread(filename);
 
-		  if (!image.data)
-			  return false;
-		  else
-			  return true;
+		  return !image.empty();
 	  }
 
 	  // Returns the current input image.

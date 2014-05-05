@@ -33,6 +33,8 @@ int main()
 
 	// To display the result
 	cv::namedWindow("Image");
+	// this handle will allow us to force the image window to refresh
+	// (Windows only)
 	HWND hWnd= (HWND)cvGetWindowHandle("Image");
     
 	// The following code simulate a user Interface

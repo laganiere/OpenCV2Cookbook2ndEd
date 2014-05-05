@@ -28,7 +28,7 @@ int main()
 
     // 2. Read input image
 	cv::Mat image= cv::imread("boldt.jpg");
-	if (!image.data)
+	if (image.empty())
 		return 0; 
 
     // 3. Set input parameters
@@ -39,8 +39,8 @@ int main()
 	cv::imshow("result",cdetect.process(image));
 
 	// or using functor
-	ColorDetector colordetector(230,190,130,  // color
-		                                100); // threshold
+	ColorDetector colordetector(230, 190, 130,  // color
+		                             45, true); // Lab threshold
 	cv::namedWindow("result (functor)");
 	cv::imshow("result (functor)",colordetector(image));
 

@@ -27,10 +27,14 @@ class ColorDetector {
   private:
 
 	  // minimum acceptable distance
-	  int minDist; 
+	  int maxDist; 
 
 	  // target color
 	  cv::Vec3b target; 
+
+	  // image containing color converted image
+	  cv::Mat converted;
+	  bool useLab;
 
 	  // image containing resulting binary map
 	  cv::Mat result;
@@ -38,14 +42,14 @@ class ColorDetector {
   public:
 
 	  // empty constructor
-	  ColorDetector() : minDist(100) { 
+	  // default parameter initialization here
+	  ColorDetector() : maxDist(100), target(0,0,0), useLab(false) {}
 
-		  // default parameter initialization here
-		  target[0]= target[1]= target[2]= 0;
-	  }
+	  // extra constructor for Lab color space example
+	  ColorDetector(bool useLab) : maxDist(100), target(0,0,0), useLab(useLab) {}
 
 	  // full constructor
-	  ColorDetector(uchar blue, uchar green, uchar red, int minDist=100): minDist(minDist) { 
+	  ColorDetector(uchar blue, uchar green, uchar red, int mxDist=100, bool useLab=false): maxDist(mxDist), useLab(useLab) { 
 
 		  // target color
 		  setTargetColor(blue, green, red);
@@ -77,18 +81,24 @@ class ColorDetector {
 
 	  cv::Mat operator()(const cv::Mat &image) {
 	  
+		  cv::Mat input;
+		  input = image;
+		  if (useLab) { // Lab conversion
+			  cv::cvtColor(image, input, CV_BGR2Lab);
+		  }
+
 		  cv::Mat output;
 		  // compute absolute difference with target color
-		  cv::absdiff(image,cv::Scalar(target),output);
+		  cv::absdiff(input,cv::Scalar(target),output);
 	      // split the channels into 3 images
 	      std::vector<cv::Mat> images;
 	      cv::split(output,images);
-		  // add the 3 channels
+		  // add the 3 channels (saturation might occurs here)
 	      output= images[0]+images[1]+images[2];
 		  // apply threshold
           cv::threshold(output,  // input image
                       output,  // output image
-                      minDist, // threshold
+                      maxDist, // threshold (must be < 256)
                       255,     // max value
                  cv::THRESH_BINARY_INV); // thresholding type
 	
@@ -104,21 +114,31 @@ class ColorDetector {
 
 		  if (distance<0)
 			  distance=0;
-		  minDist= distance;
+		  maxDist= distance;
 	  }
 
 	  // Gets the color distance threshold
 	  int getColorDistanceThreshold() const {
 
-		  return minDist;
+		  return maxDist;
 	  }
 
 	  // Sets the color to be detected
 	  void setTargetColor(uchar blue, uchar green, uchar red) {
 
-		  target[2]= red;
-		  target[1]= green;
-		  target[0]= blue;
+		  // BGR order
+		  target = cv::Vec3b(blue, green, red);
+
+		  if (useLab) {
+			  // Temporary 1-pixel image
+			  cv::Mat tmp(1, 1, CV_8UC3);
+			  tmp.at<cv::Vec3b>(0, 0) = cv::Vec3b(blue, green, red);
+
+			  // Converting the target to Lab color space 
+			  cv::cvtColor(tmp, tmp, CV_BGR2Lab);
+
+			  target = tmp.at<cv::Vec3b>(0, 0);
+		  }
 	  }
 
 	  // Sets the color to be detected
