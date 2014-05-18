@@ -30,6 +30,9 @@ int main()
 	if (!image.data)
 		return 0; 
 
+	// save grayscale image
+	cv::imwrite("groupBW.jpg", image);
+
     // Display the image
 	cv::namedWindow("Image");
 	cv::imshow("Image",image);
@@ -71,8 +74,8 @@ int main()
 	cv::namedWindow("Equalized Histogram");
 	cv::imshow("Equalized Histogram",h.getHistogramImage(eq));
 
-	// Stretch the image ignoring bins with less than 100 pixels
-	cv::Mat str= h.stretch(image,100);
+	// Stretch the image, setting the 1% of pixels at black and 1% at white
+	cv::Mat str= h.stretch(image,0.01f);
 
 	// Show the result
 	cv::namedWindow("Stretched Image");

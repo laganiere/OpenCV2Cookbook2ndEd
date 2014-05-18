@@ -34,7 +34,7 @@ void wave(const cv::Mat &image, cv::Mat &result) {
 		for (int j=0; j<image.cols; j++) {
 
 			srcX.at<float>(i,j)= j;
-			srcY.at<float>(i,j)= i+5*sin(j/10.0);
+			srcY.at<float>(i,j)= i+3*sin(j/6.0);
 
 			// horizontal flipping
 			// srcX.at<float>(i,j)= image.cols-j-1;

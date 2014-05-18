@@ -110,42 +110,17 @@ class Histogram1D {
 	}
 
 	// Computes the 1D histogram and returns an image of it.
-	cv::Mat getHistogramImage(const cv::Mat &image, int zoom=1){
+	cv::Mat getHistogramImage(const cv::Mat &image, int zoom = 1){
 
 		// Compute histogram first
-		cv::Mat hist= getHistogram(image);
+		cv::Mat hist = getHistogram(image);
 
 		// Creates image
 		return getImageOfHistogram(hist, zoom);
 	}
 
 	// Create an image representing a histogram
-	cv::Mat getImageOfHistogram(const cv::Mat &hist, int zoom=1) {
-
-		// Get min and max bin values
-		double maxVal=0;
-		double minVal=0;
-		cv::minMaxLoc(hist, &minVal, &maxVal, 0, 0);
-
-		// Square image on which to display histogram
-		cv::Mat histImg(histSize[0]*zoom, histSize[0]*zoom, CV_8U,cv::Scalar(255));
-
-		// set highest point at 90% of nbins (i.e. image height)
-		int hpt = static_cast<int>(0.9*histSize[0]);
-
-		// Draw vertical line for each bin 
-		for( int h = 0; h < histSize[0]; h++ ) {
-
-			float binVal = hist.at<float>(h);
-			if (binVal>0) {
-			  int intensity = static_cast<int>(binVal*hpt/maxVal);
-			  cv::line(histImg,cv::Point(h*zoom,histSize[0]*zoom),
-				  cv::Point(h*zoom,(histSize[0]-intensity)*zoom),cv::Scalar(0),zoom);
-			}
-		}
-
-		return histImg;
-	}
+	static cv::Mat getImageOfHistogram(const cv::Mat &hist, int zoom = 1);
 
 	// Equalizes the source image.
 	cv::Mat equalize(const cv::Mat &image) {
@@ -156,43 +131,86 @@ class Histogram1D {
 		return result;
 	}
 
-	// Stretches the source image.
-	cv::Mat stretch(const cv::Mat &image, int minValue=0) {
+	// Stretches the source image using min number of count in bins.
+	cv::Mat stretch(const cv::Mat &image, int minValue = 0) {
 
 		// Compute histogram first
-		cv::Mat hist= getHistogram(image);
+		cv::Mat hist = getHistogram(image);
 
 		// find left extremity of the histogram
-		int imin= 0;
-		for( ; imin < histSize[0]; imin++ ) {
-            // ignore bins with less than minValue entries
+		int imin = 0;
+		for (; imin < histSize[0]; imin++) {
+			// ignore bins with less than minValue entries
 			if (hist.at<float>(imin) > minValue)
 				break;
 		}
-		
-		// find right extremity of the histogram
-		int imax= histSize[0]-1;
-		for( ; imax >= 0; imax-- ) {
 
-         // ignore bins with less than minValue entries
+		// find right extremity of the histogram
+		int imax = histSize[0] - 1;
+		for (; imax >= 0; imax--) {
+
+			// ignore bins with less than minValue entries
 			if (hist.at<float>(imax) > minValue)
 				break;
 		}
 
 		// Create lookup table
-		int dims[1]={256};
-		cv::Mat lookup(1,dims,CV_8U);
+		int dims[1] = { 256 };
+		cv::Mat lookup(1, dims, CV_8U);
 
-		for (int i=0; i<256; i++) {
-		
-			if (i < imin) lookup.at<uchar>(i)= 0;
-			else if (i > imax) lookup.at<uchar>(i)= 255;
-			else lookup.at<uchar>(i)= static_cast<uchar>(255.0*(i-imin)/(imax-imin)+0.5);
+		for (int i = 0; i<256; i++) {
+
+			if (i < imin) lookup.at<uchar>(i) = 0;
+			else if (i > imax) lookup.at<uchar>(i) = 255;
+			else lookup.at<uchar>(i) = cvRound(255.0*(i - imin) / (imax - imin));
 		}
 
 		// Apply lookup table
 		cv::Mat result;
-		result= applyLookUp(image,lookup);
+		result = applyLookUp(image, lookup);
+
+		return result;
+	}
+
+	// Stretches the source image using percentile.
+	cv::Mat stretch(const cv::Mat &image, float percentile) {
+
+		// number of pixels in percentile
+		float number= image.total()*percentile;
+
+		// Compute histogram first
+		cv::Mat hist = getHistogram(image);
+
+		// find left extremity of the histogram
+		int imin = 0;
+		for (float count=0.0; imin < histSize[0]; imin++) {
+			// number of pixel at imin and below must be > number 
+			if ((count+=hist.at<float>(imin)) >= number)
+				break;
+		}
+
+		// find right extremity of the histogram
+		int imax = histSize[0] - 1;
+		for (float count=0.0; imax >= 0; imax--) {
+			// number of pixel at imax and below must be > number 
+			if ((count += hist.at<float>(imax)) >= number)
+				break;
+		}
+
+		// Create lookup table
+		int dims[1] = { 256 };
+		cv::Mat lookup(1, dims, CV_8U);
+
+		for (int i = 0; i<256; i++) {
+
+			if (i < imin) lookup.at<uchar>(i) = 0;
+			else if (i > imax) lookup.at<uchar>(i) = 255;
+			else lookup.at<uchar>(i) = cvRound(255.0*(i - imin) / (imax - imin));
+		}
+
+		// Apply lookup table
+		cv::Mat result;
+		result = applyLookUp(image, lookup);
 
 		return result;
 	}
