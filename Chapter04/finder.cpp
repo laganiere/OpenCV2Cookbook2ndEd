@@ -38,9 +38,10 @@ int main()
 	cv::Mat imageROI= image(cv::Rect(110,260,35,40));
 	cv::rectangle(image, cv::Rect(110,260,35,40),cv::Scalar(0,0,255));
 
-	// Display image
+	// Display image (just half of it)
+	cv::Mat window(image, cv::Rect(0, 2*image.rows/5, image.cols, image.rows/2));
 	cv::namedWindow("Image");
-	cv::imshow("Image",image);
+	cv::imshow("Image",window);
 
 	// Get the Hue histogram
 	int minSat=65;
@@ -68,9 +69,10 @@ int main()
 	// Second image
 	image= cv::imread("baboon3.jpg");
 
-	// Display image
+	// Display image (just half of it)
+	cv::Mat window2(image, cv::Rect(0, 2 * image.rows / 5, image.cols, image.rows / 2));
 	cv::namedWindow("Image 2");
-	cv::imshow("Image 2",image);
+	cv::imshow("Image 2",window2);
 
 	// Convert to HSV space
 	cv::cvtColor(image, hsv, CV_BGR2HSV);
@@ -96,8 +98,9 @@ int main()
 	cv::rectangle(image, rect, cv::Scalar(0,255,0));
 
 	// Display image
+	cv::Mat window2r(image, cv::Rect(0, 2 * image.rows / 5, image.cols, image.rows / 2));
 	cv::namedWindow("Image 2 result");
-	cv::imshow("Image 2 result",image);
+	cv::imshow("Image 2 result",window2r);
 
 	cv::waitKey();
 	return 0;

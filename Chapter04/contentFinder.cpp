@@ -35,7 +35,7 @@ int main()
 
 	// define image ROI
 	cv::Mat imageROI;
-	imageROI= image(cv::Rect(360,55,40,50)); // Cloud region
+	imageROI= image(cv::Rect(216,33,24,30)); // Cloud region
 
 	// Display reference patch
 	cv::namedWindow("Reference");
@@ -69,7 +69,7 @@ int main()
 	result1= finder.find(image);
 
 	// Draw a rectangle around the reference area
-	cv::rectangle(image,cv::Rect(360,55,40,50),cv::Scalar(0,0,0));
+	cv::rectangle(image, cv::Rect(216, 33, 24, 30), cv::Scalar(0, 0, 0));
 
 	// Display image
 	cv::namedWindow("Image");
@@ -84,7 +84,7 @@ int main()
 	cv::Mat color= cv::imread("waves.jpg");
 
 	// extract region of interest
-	imageROI= color(cv::Rect(0,0,165,75)); // blue sky area
+	imageROI= color(cv::Rect(0,0,100,45)); // blue sky area
 
 	// Get 3D colour histogram (8 bins per channel)
 	hc.setSize(8); // 8x8x8
