@@ -27,6 +27,8 @@ int main()
 	cv::Mat image= cv::imread("building.jpg",0);
 	if (!image.data)
 		return 0; 
+	// resize for book display
+	cv::resize(image, image, cv::Size(), 0.7, 0.7);
 
     // Display the image
 	cv::namedWindow("Image");

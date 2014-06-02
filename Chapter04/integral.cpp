@@ -28,6 +28,9 @@ int main()
 	cv::Mat image= cv::imread("book.jpg",0);
 	if (!image.data)
 		return 0; 
+	// rotate the image for easier display
+	cv::transpose(image, image);
+	cv::flip(image, image, 0);
 
 	// display original image
 	cv::namedWindow("Original Image");

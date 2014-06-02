@@ -29,12 +29,12 @@ class MorphoFeatures {
 	  // threshold to produce binary image
 	  int threshold;
 	  // structuring elements used in corner detection
-	  cv::Mat cross;
-	  cv::Mat diamond;
-	  cv::Mat square;
-	  cv::Mat x;
+	  cv::Mat_<uchar> cross;
+	  cv::Mat_<uchar> diamond;
+	  cv::Mat_<uchar> square;
+	  cv::Mat_<uchar> x;
 
-	  void applyThreshold(cv::Mat& result) {
+	  void applyThreshold(cv::Mat& result)  {
 
           // Apply threshold on result
 		  if (threshold>0)
@@ -43,38 +43,40 @@ class MorphoFeatures {
 
   public:
 
-	  MorphoFeatures() : threshold(-1), cross(5,5,CV_8U,cv::Scalar(0)), 
-		                                diamond(5,5,CV_8U,cv::Scalar(1)), 
-										square(5,5,CV_8U,cv::Scalar(1)),
-										x(5,5,CV_8U,cv::Scalar(0)){
+	  MorphoFeatures() : threshold(-1), 
+		  cross(5, 5), diamond(5, 5), square(5, 5), x(5, 5) {
 	
 		  // Creating the cross-shaped structuring element
-		  for (int i=0; i<5; i++) {
-		  
-			  cross.at<uchar>(2,i)= 1;
-			  cross.at<uchar>(i,2)= 1;									
-		  }
+		  cross <<
+			  0, 0, 1, 0, 0,
+			  0, 0, 1, 0, 0,
+			  1, 1, 1, 1, 1,
+			  0, 0, 1, 0, 0,
+			  0, 0, 1, 0, 0;
 		  
 		  // Creating the diamond-shaped structuring element
-		  diamond.at<uchar>(0,0)= 0;
-		  diamond.at<uchar>(0,1)= 0;
-		  diamond.at<uchar>(1,0)= 0;
-		  diamond.at<uchar>(4,4)= 0;
-		  diamond.at<uchar>(3,4)= 0;
-		  diamond.at<uchar>(4,3)= 0;
-		  diamond.at<uchar>(4,0)= 0;
-		  diamond.at<uchar>(4,1)= 0;
-		  diamond.at<uchar>(3,0)= 0;
-		  diamond.at<uchar>(0,4)= 0;
-		  diamond.at<uchar>(0,3)= 0;
-		  diamond.at<uchar>(1,4)= 0;
+		  diamond <<
+			  0, 0, 1, 0, 0,
+			  0, 1, 1, 1, 0,
+			  1, 1, 1, 1, 1,
+			  0, 1, 1, 1, 0,
+			  0, 0, 1, 0, 0;
 		  
 		  // Creating the x-shaped structuring element
-		  for (int i=0; i<5; i++) {
-		  
-			  x.at<uchar>(i,i)= 1;
-			  x.at<uchar>(4-i,i)= 1;									
-		  }
+		  x <<
+			  1, 0, 0, 0, 1,
+			  0, 1, 0, 1, 0,
+			  0, 0, 1, 0, 0,
+			  0, 1, 0, 1, 0,
+			  1, 0, 0, 0, 1;
+
+		  // Creating the square-shaped structuring element
+		  x <<
+			  1, 1, 1, 1, 1,
+			  1, 1, 1, 1, 1,
+			  1, 1, 1, 1, 1,
+			  1, 1, 1, 1, 1,
+			  1, 1, 1, 1, 1;
 	  }
 
 	  void setThreshold(int t) {

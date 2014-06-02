@@ -29,6 +29,8 @@ int main()
 	cv::Mat image= cv::imread("group.jpg",0);
 	if (!image.data)
 		return 0; 
+	// Resize by 70% for book printing
+	cv::resize(image, image, cv::Size(336,224));
 
 	// save grayscale image
 	cv::imwrite("groupBW.jpg", image);
@@ -61,6 +63,7 @@ int main()
 	// Display the thresholded image
 	cv::namedWindow("Binary Image");
 	cv::imshow("Binary Image",thresholded);
+	thresholded = 255 - thresholded;
 	cv::imwrite("binary.bmp",thresholded);
 
 	// Equalize the image
