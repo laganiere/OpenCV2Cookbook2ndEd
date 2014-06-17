@@ -29,6 +29,8 @@ int main()
 	cv::Mat image= cv::imread("group.jpg");
 	if (!image.data)
 		return 0; 
+	// resize for book printing
+	cv::resize(image, image, cv::Size(), 0.7, 0.7);
 
     // Display the image
 	cv::namedWindow("Original Image");
@@ -44,7 +46,7 @@ int main()
 
 	// Eliminate noise and smaller objects
 	cv::Mat fg;
-	cv::erode(binary,fg,cv::Mat(),cv::Point(-1,-1),6);
+	cv::erode(binary,fg,cv::Mat(),cv::Point(-1,-1),4);
 
     // Display the foreground image
 	cv::namedWindow("Foreground Image");
@@ -52,7 +54,7 @@ int main()
 
 	// Identify image pixels without objects
 	cv::Mat bg;
-	cv::dilate(binary,bg,cv::Mat(),cv::Point(-1,-1),6);
+	cv::dilate(binary,bg,cv::Mat(),cv::Point(-1,-1),4);
 	cv::threshold(bg,bg,1,128,cv::THRESH_BINARY_INV);
 
     // Display the background image
@@ -82,6 +84,8 @@ int main()
 
 	// Open another image
 	image= cv::imread("tower.jpg");
+	// resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	// Identify background pixels
 	cv::Mat imageMask(image.size(),CV_8U,cv::Scalar(0));
@@ -138,10 +142,11 @@ int main()
 
 	// Open another image
 	image= cv::imread("group.jpg");
+	// resize for book printing
+	cv::resize(image, image, cv::Size(), 0.7, 0.7);
 
 	// define bounding rectangle 
-		cv::Rect rectangle2(10,100,380,180);
-
+	cv::Rect rectangle2(5,70,260,120);
 	cv::Mat bkgModel,fgrModel; // the models (internally used)
 	// GrabCut segmentation
 	cv::grabCut(image,  // input image

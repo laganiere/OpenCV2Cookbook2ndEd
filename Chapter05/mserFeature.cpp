@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------------------*\
-   This file contains material supporting chapter 5 of the cookbook:  
-   Computer Vision Programming using the OpenCV Library. 
-   by Robert Laganiere, Packt Publishing, 2011.
+   This file contains material supporting chapter 5 of the cookbook:
+   Computer Vision Programming using the OpenCV Library
+   Second Edition
+   by Robert Laganiere, Packt Publishing, 2013.
 
    This program is free software; permission is hereby granted to use, copy, modify, 
    and distribute this source code, or portions thereof, for any purpose, without fee, 
@@ -30,6 +31,8 @@ int main()
 	cv::Mat image= cv::imread("building.jpg",0);
 	if (!image.data)
 		return 0; 
+	// resize for book printing
+	cv::resize(image, image, cv::Size(), 0.7, 0.7);
 
     // Display the image
 	cv::namedWindow("Image");
@@ -38,8 +41,8 @@ int main()
 
 	// basic MSER detector
 	cv::MSER mser(5,     // delta value for local minima detection
-		          500,   // min acceptable area 
-				  2000); // max acceptable area
+		          200,   // min acceptable area 
+				  1500); // max acceptable area
 
 	// vector of point sets
 	std::vector<std::vector<cv::Point>> points;
@@ -85,8 +88,8 @@ int main()
 	// detection using mserFeatures class
 
 	// create MSER feature detector instance
-	MSERFeatures mserF(500,  // min area 
-		               3000, // max area
+	MSERFeatures mserF(200,  // min area 
+		               1500, // max area
 					   0.5); // ratio area threshold
 	                         // default delta is used
 
@@ -97,8 +100,8 @@ int main()
 	cv::Mat result= mserF.getImageOfEllipses(image,rects);
 
 	// display detected MSER
-	cv::namedWindow("Image with MSER regions");
-	cv::imshow("Image with MSER regions",result);
+	cv::namedWindow("MSER regions");
+	cv::imshow("MSER regions",result);
 
 	cv::waitKey();
 }

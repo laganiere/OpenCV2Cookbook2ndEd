@@ -30,7 +30,7 @@ int main()
 	if (!image.data)
 		return 0; 
 	// Resize by 70% for book printing
-	cv::resize(image, image, cv::Size(336,224));
+	cv::resize(image, image, cv::Size(), 0.7, 0.7);
 
 	// save grayscale image
 	cv::imwrite("groupBW.jpg", image);
