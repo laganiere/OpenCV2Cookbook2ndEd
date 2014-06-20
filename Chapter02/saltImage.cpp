@@ -18,6 +18,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <stdlib.h> // for std::rand
 
 void salt(cv::Mat image, int n) {
@@ -75,6 +76,8 @@ int main()
 {
 	// open the image
 	cv::Mat image= cv::imread("boldt.jpg",1);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	// call function to add noise
 	salt(image,3000);
@@ -90,7 +93,10 @@ int main()
 
 	// test second version
 	image= cv::imread("boldt.jpg",0);
-	salt2(image,500);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	salt2(image, 500);
 
 	cv::namedWindow("Image");
 	cv::imshow("Image",image);

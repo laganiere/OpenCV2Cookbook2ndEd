@@ -53,6 +53,8 @@ void wave(const cv::Mat &image, cv::Mat &result) {
 int main()
 {
 	cv::Mat image= cv::imread("boldt.jpg",0);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	cv::namedWindow("Image");
 	cv::imshow("Image",image);

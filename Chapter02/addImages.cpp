@@ -20,7 +20,7 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
+#include <opencv2/imgproc/imgproc.hpp>
 
 int main()
 {
@@ -33,6 +33,10 @@ int main()
 		return 0; 
 	if (!image2.data)
 		return 0; 
+
+	// images ares resize for book printing
+	cv::resize(image1, image1, cv::Size(), 0.6, 0.6);
+	cv::resize(image2, image2, cv::Size(), 0.6, 0.6);
 
 	cv::namedWindow("Image 1");
 	cv::imshow("Image 1",image1);
@@ -53,6 +57,8 @@ int main()
 	cv::imshow("result with operators",result);
 
 	image2= cv::imread("rain.jpg",0);
+	// images ares resize for book printing
+	cv::resize(image2, image2, cv::Size(), 0.6, 0.6);
 
 	// create vector of 3 images
 	std::vector<cv::Mat> planes;

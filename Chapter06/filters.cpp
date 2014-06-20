@@ -27,6 +27,8 @@ int main()
 	cv::Mat image= cv::imread("boldt.jpg",0);
 	if (!image.data)
 		return 0; 
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
     // Display the image
 	cv::namedWindow("Original Image");
@@ -34,7 +36,10 @@ int main()
 
 	// Blur the image
 	cv::Mat result;
-	cv::GaussianBlur(image,result,cv::Size(5,5),1.5);
+	cv::GaussianBlur(image,result,
+		  cv::Size(5,5), // size of the filter
+		  1.5);			 // parameter controlling the 
+						 // shape of the Gaussian
 
     // Display the blurred image
 	cv::namedWindow("Gaussian filtered Image");
@@ -144,9 +149,19 @@ int main()
 	cv::namedWindow("Median filtered S&P Image");
 	cv::imshow("Median filtered S&P Image",result);
 
+	// Resizing the image 
+	image = cv::imread("boldt.jpg", 0);
+	cv::Mat resized;
+	cv::resize(image, resized,
+		cv::Size(), 1.0 / 4.0, 1.0 / 4.0); // 1/4 resizing
+	cv::resize(resized, resized, cv::Size(), 2, 2, cv::INTER_NEAREST);
+	// Display the reduced image
+	cv::namedWindow("Resized Image");
+	cv::imshow("Resized Image", resized);
+
 	// Reduce by 4 the size of the image (the wrong way)
 	image= cv::imread("boldt.jpg",0);
-	cv::Mat reduced(image.rows/4,image.cols/4,CV_8U);
+	cv::Mat reduced(image.rows / 4, image.cols / 4, CV_8U);
 
 	for (int i=0; i<reduced.rows; i++)
 		for (int j=0; j<reduced.cols; j++)
@@ -156,16 +171,16 @@ int main()
 	cv::namedWindow("Badly reduced Image");
 	cv::imshow("Badly reduced Image",reduced);
 
-	cv::resize(reduced,reduced, cv::Size(),4,4,cv::INTER_NEAREST);
+	cv::resize(reduced,reduced, cv::Size(),2,2,cv::INTER_NEAREST);
 
     // Display the (resized) reduced image
-	cv::namedWindow("Badly reduced Image (resized)");
-	cv::imshow("Badly reduced Image (resized)",reduced);
+	cv::namedWindow("Badly reduced");
+	cv::imshow("Badly reduced",reduced);
 
 	cv::imwrite("badlyreducedimage.bmp",reduced);
 
 	// first remove high frequency component
-	cv::GaussianBlur(image,image,cv::Size(11,11),2.0);
+	cv::GaussianBlur(image,image,cv::Size(11,11),1.75);
 	// keep only 1 of every 4 pixels
 	cv::Mat reduced2(image.rows/4,image.cols/4,CV_8U);
 	for (int i=0; i<reduced2.rows; i++)
@@ -173,25 +188,32 @@ int main()
 			reduced2.at<uchar>(i,j)= image.at<uchar>(i*4,j*4);
 
     // Display the reduced image
-	cv::namedWindow("Reduced Image");
-	cv::imshow("Reduced Image",reduced2);
+	cv::namedWindow("Reduced Image, original size");
+	cv::imshow("Reduced Image, original size",reduced2);
 
 	cv::imwrite("reducedimage.bmp",reduced2);
 
 	// resizing with NN
 	cv::Mat newImage;
-	cv::resize(reduced2, newImage, cv::Size(), 4, 4,cv::INTER_NEAREST);
+	cv::resize(reduced2, newImage, cv::Size(), 2, 2,cv::INTER_NEAREST);
 
     // Display the (resized) reduced image
-	cv::namedWindow("Reduced Image resized (nearest-neighbor)");
-	cv::imshow("Reduced Image resized (nearest-neighbor)",newImage);
+	cv::namedWindow("Reduced Image");
+	cv::imshow("Reduced Image",newImage);
 
 	// resizing with bilinear
-	cv::resize(reduced2, newImage, cv::Size(), 4, 4,cv::INTER_LINEAR);
+	cv::resize(reduced2, newImage, cv::Size(), 3, 3, cv::INTER_LINEAR);
 
-    // Display the (resized) reduced image
-	cv::namedWindow("Reduced Image resized (bilinear)");
-	cv::imshow("Reduced Image resized (bilinear)", newImage);
+	// Display the (resized) reduced image
+	cv::namedWindow("Bilinear resizing");
+	cv::imshow("Bilinear resizing", newImage);
+
+	// resizing with nearest-neighbor
+	cv::resize(reduced2, newImage, cv::Size(), 3, 3, cv::INTER_NEAREST);
+
+	// Display the (resized) reduced image
+	cv::namedWindow("Nearest-neighbor resizing");
+	cv::imshow("Nearest-neighbor resizing", newImage);
 
 	cv::waitKey();
 	return 0;

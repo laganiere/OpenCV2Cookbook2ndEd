@@ -94,6 +94,8 @@ int main()
 	cv::Mat image= cv::imread("boldt.jpg");
 	if (!image.data)
 		return 0; 
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	cv::Mat result;
 
@@ -107,7 +109,10 @@ int main()
 
 	// open the image in gay-level
 	image= cv::imread("boldt.jpg",0);
-	time= static_cast<double>(cv::getTickCount());
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	time = static_cast<double>(cv::getTickCount());
 	sharpenIterator(image, result);
 	time= (static_cast<double>(cv::getTickCount())-time)/cv::getTickFrequency();
 	std::cout << "time 3= " << time << std::endl;
@@ -116,7 +121,10 @@ int main()
 	cv::imshow("Sharpened Image",result);
 
 	image= cv::imread("boldt.jpg");
-	time= static_cast<double>(cv::getTickCount());
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	time = static_cast<double>(cv::getTickCount());
 	sharpen2D(image, result);
 	time= (static_cast<double>(cv::getTickCount())-time)/cv::getTickFrequency();
 	std::cout << "time 2D= " << time << std::endl;
