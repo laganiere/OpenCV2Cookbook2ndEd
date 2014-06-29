@@ -34,6 +34,8 @@ int main()
 	cv::Mat image= cv::imread("road.jpg",0);
 	if (!image.data)
 		return 0; 
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
     // Display the image
 	cv::namedWindow("Original Image");
@@ -80,7 +82,7 @@ int main()
 
 	// Hough tranform for line detection
 	std::vector<cv::Vec2f> lines;
-	cv::HoughLines(contours,lines,1,PI/180,80);
+	cv::HoughLines(contours,lines,1,PI/180,50);
 
 	// Draw the lines
 	cv::Mat result(contours.rows,contours.cols,CV_8U,cv::Scalar(255));
@@ -119,21 +121,21 @@ int main()
 	}
 
     // Display the detected line image
-	cv::namedWindow("Detected Lines with Hough");
-	cv::imshow("Detected Lines with Hough",result);
+	cv::namedWindow("Lines with Hough");
+	cv::imshow("Lines with Hough",result);
 
 	// Create LineFinder instance
 	LineFinder ld;
 
 	// Set probabilistic Hough parameters
 	ld.setLineLengthAndGap(100,20);
-	ld.setMinVote(80);
+	ld.setMinVote(60);
 
 	// Detect lines
 	std::vector<cv::Vec4i> li= ld.findLines(contours);
 	ld.drawDetectedLines(image);
-	cv::namedWindow("Detected Lines with HoughP");
-	cv::imshow("Detected Lines with HoughP",image);
+	cv::namedWindow("Lines with HoughP");
+	cv::imshow("Lines with HoughP",image);
 
 	std::vector<cv::Vec4i>::const_iterator it2= li.begin();
 	while (it2!=li.end()) {
@@ -146,14 +148,17 @@ int main()
 
 	// Display one line
 	image= cv::imread("road.jpg",0);
-	int n=0;
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	int n = 0;
 	cv::line(image, cv::Point(li[n][0],li[n][1]),cv::Point(li[n][2],li[n][3]),cv::Scalar(255),5);
 	cv::namedWindow("One line of the Image");
 	cv::imshow("One line of the Image",image);
 
 	// Extract the contour pixels of the first detected line
 	cv::Mat oneline(image.size(),CV_8U,cv::Scalar(0));
-	cv::line(oneline, cv::Point(li[n][0],li[n][1]),cv::Point(li[n][2],li[n][3]),cv::Scalar(255),5);
+	cv::line(oneline, cv::Point(li[n][0],li[n][1]),cv::Point(li[n][2],li[n][3]),cv::Scalar(255),3);
 	cv::bitwise_and(contours,oneline,oneline);
 	cv::namedWindow("One line");
 	cv::imshow("One line",255-oneline);
@@ -181,11 +186,14 @@ int main()
 
 	std::cout << "line: (" << line[0] << "," << line[1] << ")(" << line[2] << "," << line[3] << ")\n"; 
 
-	int x0= line[2];
+	int x0= line[2]; // a point on the line
 	int y0= line[3];
-	int x1= x0-200*line[0];
-	int y1= y0-200*line[1];
+	int x1= x0+100*line[0]; // add a vector of length 100
+	int y1= y0+100*line[1];
 	image= cv::imread("road.jpg",0);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
 	// draw the line
 	cv::line(image,cv::Point(x0,y0),cv::Point(x1,y1),0,3);
 	cv::namedWindow("Fitted line");
@@ -196,6 +204,9 @@ int main()
 
    // Display the detected line image
 	image= cv::imread("road.jpg",0);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
 	ld.drawDetectedLines(image);
 	cv::namedWindow("Detected Lines (2)");
 	cv::imshow("Detected Lines (2)",image);
@@ -212,7 +223,7 @@ int main()
 		double theta= i*PI/180.;
 
 		// find corresponding rho value 
-		double rho= x*cos(theta)+y*sin(theta);
+		double rho= x*std::cos(theta)+y*std::sin(theta);
 		int j= static_cast<int>(rho+100.5);
 
 		std::cout << i << "," << j << std::endl;
@@ -246,20 +257,26 @@ int main()
 
 	// Detect circles
 	image= cv::imread("chariot.jpg",0);
-	cv::GaussianBlur(image,image,cv::Size(5,5),1.5);
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	cv::GaussianBlur(image, image, cv::Size(5, 5), 1.5);
 	std::vector<cv::Vec3f> circles;
 	cv::HoughCircles(image, circles, CV_HOUGH_GRADIENT, 
 		2,   // accumulator resolution (size of the image / 2) 
-		50,  // minimum distance between two circles
+		20,  // minimum distance between two circles
 		200, // Canny high threshold 
-		100, // minimum number of votes 
-		25, 100); // min and max radius
+		60, // minimum number of votes 
+		15, 50); // min and max radius
 
 	std::cout << "Circles: " << circles.size() << std::endl;
 	
 	// Draw the circles
 	image= cv::imread("chariot.jpg",0);
-	std::vector<cv::Vec3f>::const_iterator itc= circles.begin();
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
+
+	std::vector<cv::Vec3f>::const_iterator itc = circles.begin();
 	
 	while (itc!=circles.end()) {
 		

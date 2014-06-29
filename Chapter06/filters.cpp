@@ -139,15 +139,15 @@ int main()
 	cv::blur(image,result,cv::Size(5,5));
 		
     // Display the blurred image
-	cv::namedWindow("Mean filtered S&P Image");
-	cv::imshow("Mean filtered S&P Image",result);
+	cv::namedWindow("Mean filtered Image");
+	cv::imshow("Mean filtered Image",result);
 
 	// Applying a median filter
 	cv::medianBlur(image,result,5);
 		
     // Display the blurred image
-	cv::namedWindow("Median filtered S&P Image");
-	cv::imshow("Median filtered S&P Image",result);
+	cv::namedWindow("Median filtered Image");
+	cv::imshow("Median filtered Image",result);
 
 	// Resizing the image 
 	image = cv::imread("boldt.jpg", 0);

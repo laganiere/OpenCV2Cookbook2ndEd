@@ -58,7 +58,7 @@ int main()
 	cv::imshow("Contours",result);
 
 	// Eliminate too short or too long contours
-	int cmin= 100;  // minimum contour length
+	int cmin= 50;  // minimum contour length
 	int cmax= 1000; // maximum contour length
 	std::vector<std::vector<cv::Point>>::const_iterator itc= contours.begin();
 	while (itc!=contours.end()) {
@@ -71,6 +71,9 @@ int main()
 
 	// draw contours on the original image
 	cv::Mat original= cv::imread("group.jpg");
+	// image is resize for book printing
+	cv::resize(original, original, cv::Size(), 0.7, 0.7);
+
 	cv::drawContours(original,contours,
 		-1, // draw all contours
 		cv::Scalar(255,255,255), // in white
@@ -113,9 +116,9 @@ int main()
 	cv::convexHull(contours[3],hull);
 	// draw the polygon
 	cv::polylines(result, hull, true, 0, 2);
-
+	
 	std::vector<cv::Vec4i> defects;
-	cv::convexityDefects(contours[3], hull, defects);
+//	cv::convexityDefects(contours[3], hull, defects);
 
 	// testing the moments
 
@@ -183,7 +186,7 @@ int main()
 	while (it!= contours.end()) {
 		poly.clear();
 		// approximate contour by polygon
-		cv::approxPolyDP(*it,poly,10,true);
+		cv::approxPolyDP(*it,poly,5,true);
 	
 		// do we have a quadrilateral?
 		if (poly.size()==4) {

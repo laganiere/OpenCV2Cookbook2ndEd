@@ -29,6 +29,8 @@ int main()
 	cv::Mat image= cv::imread("boldt.jpg",0);
 	if (!image.data)
 		return 0; 
+	// image is resize for book printing
+	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
     // Display the image
 	cv::namedWindow("Original Image");
@@ -36,7 +38,12 @@ int main()
 
 	// Compute Sobel X derivative
 	cv::Mat sobelX;
-	cv::Sobel(image,sobelX,CV_8U,1,0,3,0.4,128);
+	cv::Sobel(image,  // input
+		sobelX,    // output
+		CV_8U,     // image type
+		1, 0,      // kernel specification
+		3,         // size of the square kernel 
+		0.4, 128); // scale and offset
 
     // Display the image
 	cv::namedWindow("Sobel X Image");
@@ -44,7 +51,12 @@ int main()
 
 	// Compute Sobel Y derivative
 	cv::Mat sobelY;
-	cv::Sobel(image,sobelY,CV_8U,0,1,3,0.4,128);
+	cv::Sobel(image,  // input
+		sobelY,    // output
+		CV_8U,     // image type
+		0, 1,      // kernel specification
+		3,         // size of the square kernel 
+		0.4, 128); // scale and offset
 
     // Display the image
 	cv::namedWindow("Sobel Y Image");
@@ -71,7 +83,7 @@ int main()
 	// Print window pixel values
 	for (int i=0; i<12; i++) {
 		for (int j=0; j<12; j++)
-			std::cout << std::setw(5) << static_cast<int>(sobel.at<short>(i+135,j+362)) << " ";
+			std::cout << std::setw(5) << static_cast<int>(sobel.at<short>(i+79,j+215)) << " ";
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
@@ -113,7 +125,7 @@ int main()
 	// Print window pixel values
 	for (int i=0; i<12; i++) {
 		for (int j=0; j<12; j++)
-			std::cout << std::setw(5) << static_cast<int>(laplace.at<uchar>(i+135,j+362))-128 << " ";
+			std::cout << std::setw(5) << static_cast<int>(laplace.at<uchar>(i+79, j+215)) - 128 << " ";
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
@@ -130,12 +142,12 @@ int main()
 	// Print window pixel values
 	for (int i=0; i<12; i++) {
 		for (int j=0; j<12; j++)
-			std::cout << std::setw(5) << static_cast<int>(laplace.at<uchar>(i+135,j+362))-128 << " ";
+			std::cout << std::setw(5) << static_cast<int>(laplace.at<uchar>(i+79, j+215)) - 128 << " ";
 		std::cout << std::endl;
 	}
 
     // Extract small window
-	cv::Mat window(image,cv::Rect(362,135,12,12));
+	cv::Mat window(image,cv::Rect(215,79,12,12));
 	cv::namedWindow("Image window");
 	cv::imshow("Image window",window);
 	cv::imwrite("window.bmp",window);
@@ -159,7 +171,7 @@ int main()
 	std::cout << std::endl;
 	for (int i=0; i<12; i++) {
 		for (int j=0; j<12; j++)
-			std::cout << std::setw(5) << static_cast<int>(flap.at<float>(i+135,j+362)/100) << " ";
+			std::cout << std::setw(5) << static_cast<int>(flap.at<float>(i+79, j+215) / 100) << " ";
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
@@ -173,7 +185,7 @@ int main()
 	// Print window pixel values
 	for (int i=0; i<12; i++) {
 		for (int j=0; j<12; j++)
-			std::cout << std::setw(2) << static_cast<int>(zeros.at<uchar>(i+135,j+362)) << " ";
+			std::cout << std::setw(2) << static_cast<int>(zeros.at<uchar>(i+79, j+215)) << " ";
 		std::cout << std::endl;
 	}
 	
@@ -230,7 +242,7 @@ int main()
 	cv::imshow("Zero-crossings of DoG",255-zeros);
 
     // Display the image with window
-	cv::rectangle(image,cv::Point(362,135),cv::Point(374,147),cv::Scalar(255,255,255));
+	cv::rectangle(image,cv::Point(214,80),cv::Point(226,92),cv::Scalar(255,255,255));
 	cv::namedWindow("Original Image with window");
 	cv::imshow("Original Image with window",image);
 
