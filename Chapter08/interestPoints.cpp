@@ -102,12 +102,12 @@ int main()
 	// vector of keypoints
 	std::vector<cv::KeyPoint> keypoints;
 	// Construction of the Good Feature to Track detector 
-	cv::GoodFeaturesToTrackDetector gftt(
+	cv::Ptr<cv::FeatureDetector> gftt= new cv::GoodFeaturesToTrackDetector(
 		500,	// maximum number of corners to be returned
 		0.01,	// quality level
 		10);	// minimum allowed distance between points
 	// point detection using FeatureDetector method
-	gftt.detect(image,keypoints);
+	gftt->detect(image,keypoints);
 	
 	cv::drawKeypoints(image,		// original image
 		keypoints,					// vector of keypoints
@@ -125,8 +125,8 @@ int main()
 	image= cv::imread("church01.jpg",0);
 
 	keypoints.clear();
-	cv::FastFeatureDetector fast(40);
-	fast.detect(image,keypoints);
+	cv::Ptr<cv::FeatureDetector> fast= new cv::FastFeatureDetector(40);
+	fast->detect(image,keypoints);
 	
 	cv::drawKeypoints(image,keypoints,image,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_OVER_OUTIMG);
 	std::cout << "Number of keypoints (FAST): " << keypoints.size() << std::endl; 
@@ -210,8 +210,8 @@ int main()
 	cv::drawKeypoints(image,keypoints,image,cv::Scalar(255,255,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
     // Display the corners
-	cv::namedWindow("FAST (3 levels)");
-	cv::imshow("FAST (3 levels)",image);
+	cv::namedWindow("FAST (3)");
+	cv::imshow("FAST (3)",image);
 
 	// SURF:
 

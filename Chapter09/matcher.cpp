@@ -169,8 +169,8 @@ int main()
    // 3. Define feature detector
 	 
    // Construct the SURF feature detector object
-   detector = new cv::SIFT();
-
+   detector = new cv::SIFT(500);
+   
 	// 4. Keypoint detection
 	// Detect the SIFT features
 	detector->detect(image1,keypoints1);
@@ -196,10 +196,6 @@ int main()
 	// 5. Extract the descriptor
     descriptor->compute(image1,keypoints1,descriptors1);
     descriptor->compute(image2,keypoints2,descriptors2);
-
-	cv::Mat test(descriptors1.row(1));
-std::cout<<cv::sum(test)<<std::endl;
-std::cout<<cv::sum(descriptors1.row(8))<<std::endl;
 
    // Match the two image descriptors
    matcher.match(descriptors1,descriptors2, matches);
@@ -252,14 +248,14 @@ std::cout<<cv::sum(descriptors1.row(8))<<std::endl;
 	matches.erase(matches.begin()+50,matches.end());
 
    // draw matches
-   cv::drawMatches(
-     image1,keypoints1, // 1st image and its keypoints
-     image2,keypoints2, // 2nd image and its keypoints
-     matches,            // the matches
-     imageMatches,      // the image produced
-     cv::Scalar(255,255,255),  // color of lines
-     cv::Scalar(255,255,255)); // color of points
-
+	cv::drawMatches(
+		image1, keypoints1, // 1st image and its keypoints
+		image2, keypoints2, // 2nd image and its keypoints
+		matches,            // the matches
+		imageMatches,      // the image produced
+		cv::Scalar(255, 255, 255),  // color of lines
+		cv::Scalar(255, 255, 255), // color of points
+		std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
     // Display the image of matches
 	cv::namedWindow("multi-scale SIFT Matches");
 	cv::imshow("multi-scale SIFT Matches",imageMatches);

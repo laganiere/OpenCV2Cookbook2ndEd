@@ -74,8 +74,7 @@ class HarrisDetector {
 					 k);           // Harris parameter
 	
 		  // internal threshold computation
-		  double minStrength; // not used
-		  cv::minMaxLoc(cornerStrength,&minStrength,&maxStrength);
+		  cv::minMaxLoc(cornerStrength,0,&maxStrength);
 
 		  // local maxima detection
 		  cv::Mat dilated;  // temporary image

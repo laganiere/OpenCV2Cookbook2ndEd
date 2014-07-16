@@ -48,11 +48,12 @@ int main()
 	std::cout << "Number of keypoints (image 2): " << keypoints2.size() << std::endl; 
 
 	// 5. Define a square neighborhood
-	cv::Rect neighbors(0,0,11,11); // 11x11
+	const int nsize(11); // size of the neighborhood
+	cv::Rect neighborhood(0, 0, nsize, nsize); // 11x11
 	cv::Mat patch1;
 	cv::Mat patch2;
 
-	// 6. Forall keypoints in first image
+	// 6. For all keypoints in first image
 	//    find best match in second image
 	cv::Mat result;
 	std::vector<cv::DMatch> matches;
@@ -61,16 +62,16 @@ int main()
 	for (int i=0; i<keypoints1.size(); i++) {
 	
 		// define image patch
-		neighbors.x= keypoints1[i].pt.x-5;
-		neighbors.y= keypoints1[i].pt.y-5;
+		neighborhood.x = keypoints1[i].pt.x-nsize/2;
+		neighborhood.y = keypoints1[i].pt.y-nsize/2;
 
 		// if neighborhood of points outside image, then continue with next point
-		if (neighbors.x<0 || neighbors.y<0 || 
-			neighbors.x+11 >= image1.cols || neighbors.y+11 >= image1.rows)
+		if (neighborhood.x<0 || neighborhood.y<0 ||
+			neighborhood.x+nsize >= image1.cols || neighborhood.y+nsize >= image1.rows)
 			continue;
 
 		//patch in image 1
-		patch1= image1(neighbors);
+		patch1 = image1(neighborhood);
 
 		// reset best correlation value;
 		cv::DMatch bestMatch;
@@ -79,16 +80,16 @@ int main()
 	    for (int j=0; j<keypoints2.size(); j++) {
 
 			// define image patch
-			neighbors.x= keypoints2[j].pt.x-5;
-			neighbors.y= keypoints2[j].pt.y-5;
+			neighborhood.x = keypoints2[j].pt.x-nsize/2;
+			neighborhood.y = keypoints2[j].pt.y-nsize/2;
 
 			// if neighborhood of points outside image, then continue with next point
-			if (neighbors.x<0 || neighbors.y<0 || 
-				neighbors.x+11 >= image2.cols || neighbors.y+11 >= image2.rows)
+			if (neighborhood.x<0 || neighborhood.y<0 ||
+				neighborhood.x + nsize >= image2.cols || neighborhood.y + nsize >= image2.rows)
 				continue;
 
 			// patch in image 2
-			patch2= image2(neighbors);
+			patch2 = image2(neighborhood);
 
 			// match the two patches
 			cv::matchTemplate(patch1,patch2,result,CV_TM_SQDIFF_NORMED);

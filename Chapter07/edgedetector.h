@@ -60,14 +60,28 @@ class EdgeDetector {
 	  }
 
 	  // Compute the Sobel
-	  void computeSobel(const cv::Mat& image, cv::Mat &sobelX=cv::Mat(), cv::Mat &sobelY=cv::Mat()) {
+	  void computeSobel(const cv::Mat& image) {
+
+		  cv::Mat sobelX;
+		  cv::Mat sobelY;
 
 		  // Compute Sobel
-		  cv::Sobel(image,sobelX,CV_32F,1,0,aperture);
-		  cv::Sobel(image,sobelY,CV_32F,0,1,aperture);
+		  cv::Sobel(image, sobelX, CV_32F, 1, 0, aperture);
+		  cv::Sobel(image, sobelY, CV_32F, 0, 1, aperture);
 
 		  // Compute magnitude and orientation
-		  cv::cartToPolar(sobelX,sobelY,sobelMagnitude,sobelOrientation);
+		  cv::cartToPolar(sobelX, sobelY, sobelMagnitude, sobelOrientation);
+	  }
+
+	  // Compute the Sobel
+	  void computeSobel(const cv::Mat& image, cv::Mat &sobelX, cv::Mat &sobelY) {
+
+		  // Compute Sobel
+		  cv::Sobel(image, sobelX, CV_32F, 1, 0, aperture);
+		  cv::Sobel(image, sobelY, CV_32F, 0, 1, aperture);
+
+		  // Compute magnitude and orientation
+		  cv::cartToPolar(sobelX, sobelY, sobelMagnitude, sobelOrientation);
 	  }
 
 	  // Get Sobel magnitude

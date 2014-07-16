@@ -40,8 +40,8 @@ int main()
 	// 3. Define feature detector
 	// Construct the ORB feature detector object
 	cv::Ptr<cv::FeatureDetector> detector = 
-		new cv::BRISK(40); // to detect BRISK points  
-//		new cv::ORB(100); // detect approx 100 ORB points  
+//		new cv::BRISK(40); // to detect BRISK points  
+		new cv::ORB(100); // detect approx 100 ORB points  
 
 	// 4. Keypoint detection
 	// Detect the ORB features
@@ -60,8 +60,8 @@ int main()
 	std::cout << "Number of ORB keypoints (image 2): " << keypoints2.size() << std::endl; 
 
 	// ORB includes both the detector and descriptor extractor
-	cv::Ptr<cv::DescriptorExtractor> descriptor =// detector;
-		 new cv::FREAK(); // to describe with FREAK  
+	cv::Ptr<cv::DescriptorExtractor> descriptor = detector;
+//		 new cv::FREAK(); // to describe with FREAK  
 
 	// 5. Extract the descriptor
     cv::Mat descriptors1;
@@ -88,17 +88,13 @@ int main()
      cv::Scalar(255,255,255)); // color of points
 
     // Display the image of matches
-	cv::namedWindow("FREAK Matches");
-	cv::imshow("FREAK Matches",imageMatches);
+   cv::namedWindow("ORB Matches");
+   cv::imshow("ORB Matches", imageMatches);
+//   cv::namedWindow("FREAK Matches");
+//   cv::imshow("FREAK Matches", imageMatches);
 
 	std::cout << "Number of matches: " << matches.size() << std::endl; 
 
-	/*    cv::FileStorage fs("test.yml", cv::FileStorage::WRITE);
-		for (int i=0;i<keypoints1.size();i++){
-    fs << keypoints1[i] ;
-		}
-		fs.release();
-		*/
    cv::waitKey();
    return 0;
 }
