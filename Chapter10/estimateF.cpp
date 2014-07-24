@@ -84,11 +84,12 @@ int main()
 	std::vector<cv::DMatch> selMatches;
 
 	/* between church01 and church03 */
+	// make sure to double-check if the selected matches are valid
 	selMatches.push_back(matches[1]);  
-	selMatches.push_back(matches[8]);  
-	selMatches.push_back(matches[0]);  
+	selMatches.push_back(matches[2]);  
+	selMatches.push_back(matches[5]);  
 	selMatches.push_back(matches[16]);  
-	selMatches.push_back(matches[20]);  
+	selMatches.push_back(matches[29]);  
 	selMatches.push_back(cv::DMatch(keypoints1.size()-2,keypoints2.size()-2,1));
 	selMatches.push_back(cv::DMatch(keypoints1.size()-1,keypoints2.size()-1,1));
 
@@ -106,6 +107,7 @@ int main()
 					); // color of the lines
 	cv::namedWindow("Matches");
 	cv::imshow("Matches",imageMatches);
+		
 
 	// Convert 1 vector of keypoints into
 	// 2 vectors of Point2f
@@ -142,13 +144,13 @@ int main()
 	}
 
 	// Compute F matrix from 7 matches
-	cv::Mat fundemental= cv::findFundamentalMat(
+	cv::Mat fundamental= cv::findFundamentalMat(
 		selPoints1, // points in first image
 		selPoints2, // points in second image
 		CV_FM_7POINT);       // 7-point method
 
-	std::cout << "F-Matrix size= " << fundemental.rows << "," << fundemental.cols << std::endl;  
-	cv::Mat fund(fundemental,cv::Rect(0,0,3,3));
+	std::cout << "F-Matrix size= " << fundamental.rows << "," << fundamental.cols << std::endl;
+	cv::Mat fund(fundamental, cv::Rect(0, 0, 3, 3));
 	// draw the left points corresponding epipolar lines in right image 
 	std::vector<cv::Vec3f> lines1; 
 	cv::computeCorrespondEpilines(

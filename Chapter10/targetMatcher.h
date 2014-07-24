@@ -100,13 +100,9 @@ class TargetMatcher {
 			 it!= matches.end(); ++it) {
 
 			 // Get the position of left keypoints
-			 float x= keypoints1[it->queryIdx].pt.x;
-			 float y= keypoints1[it->queryIdx].pt.y;
-			 points1.push_back(cv::Point2f(x,y));
+			 points1.push_back(keypoints1[it->queryIdx].pt);
 			 // Get the position of right keypoints
-			 x= keypoints2[it->trainIdx].pt.x;
-			 y= keypoints2[it->trainIdx].pt.y;
-			 points2.push_back(cv::Point2f(x,y));
+			 points2.push_back(keypoints2[it->trainIdx].pt);
 	    }
 
 		// Find the homography between image 1 and image 2

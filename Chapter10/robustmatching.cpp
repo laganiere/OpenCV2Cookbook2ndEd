@@ -50,8 +50,8 @@ int main()
 	std::vector<cv::DMatch> matches;
 
 	std::vector<cv::KeyPoint> keypoints1, keypoints2;
-	cv::Mat fundemental= rmatcher.match(image1,image2,matches, 
-		keypoints1, keypoints2,CROSSCHECK);
+	cv::Mat fundamental= rmatcher.match(image1,image2,matches, 
+		keypoints1, keypoints2);
 
 	// draw the matches
 	cv::Mat imageMatches;
@@ -75,18 +75,18 @@ int main()
 			 // Get the position of left keypoints
 			 float x= keypoints1[it->queryIdx].pt.x;
 			 float y= keypoints1[it->queryIdx].pt.y;
-			 points1.push_back(cv::Point2f(x,y));
+			 points1.push_back(keypoints1[it->queryIdx].pt);
 			 cv::circle(image1,cv::Point(x,y),3,cv::Scalar(255,255,255),3);
 			 // Get the position of right keypoints
 			 x= keypoints2[it->trainIdx].pt.x;
 			 y= keypoints2[it->trainIdx].pt.y;
 			 cv::circle(image2,cv::Point(x,y),3,cv::Scalar(255,255,255),3);
-			 points2.push_back(cv::Point2f(x,y));
+			 points2.push_back(keypoints2[it->trainIdx].pt);
 	}
 	
 	// Draw the epipolar lines
 	std::vector<cv::Vec3f> lines1; 
-	cv::computeCorrespondEpilines(points1,1,fundemental,lines1);
+	cv::computeCorrespondEpilines(points1,1,fundamental,lines1);
 		
 	for (std::vector<cv::Vec3f>::const_iterator it= lines1.begin();
 			 it!=lines1.end(); ++it) {
@@ -97,7 +97,7 @@ int main()
 	}
 
 	std::vector<cv::Vec3f> lines2; 
-	cv::computeCorrespondEpilines(points2,2,fundemental,lines2);
+	cv::computeCorrespondEpilines(points2,2,fundamental,lines2);
 	
 	for (std::vector<cv::Vec3f>::const_iterator it= lines2.begin();
 		     it!=lines2.end(); ++it) {

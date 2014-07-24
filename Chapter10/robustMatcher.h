@@ -189,7 +189,7 @@ class RobustMatcher {
 	  }
 
 	  // Identify good matches using RANSAC
-	  // Return fundemental matrix and output matches
+	  // Return fundamental matrix and output matches
 	  cv::Mat ransacTest(const std::vector<cv::DMatch>& matches,
 		                 std::vector<cv::KeyPoint>& keypoints1, 
 						 std::vector<cv::KeyPoint>& keypoints2,
@@ -202,18 +202,14 @@ class RobustMatcher {
 			 it!= matches.end(); ++it) {
 
 			 // Get the position of left keypoints
-			 float x= keypoints1[it->queryIdx].pt.x;
-			 float y= keypoints1[it->queryIdx].pt.y;
-			 points1.push_back(cv::Point2f(x,y));
+			 points1.push_back(keypoints1[it->queryIdx].pt);
 			 // Get the position of right keypoints
-			 x= keypoints2[it->trainIdx].pt.x;
-			 y= keypoints2[it->trainIdx].pt.y;
-			 points2.push_back(cv::Point2f(x,y));
+			 points2.push_back(keypoints2[it->trainIdx].pt);
 	    }
 
 		// Compute F matrix using RANSAC
 		std::vector<uchar> inliers(points1.size(),0);
-		cv::Mat fundemental= cv::findFundamentalMat(
+		cv::Mat fundamental= cv::findFundamentalMat(
 			points1,points2, // matching points
 		    inliers,      // match status (inlier or outlier)  
 		    CV_FM_RANSAC, // RANSAC method
@@ -243,17 +239,13 @@ class RobustMatcher {
 				 it!= outMatches.end(); ++it) {
 
 				 // Get the position of left keypoints
-				 float x= keypoints1[it->queryIdx].pt.x;
-				 float y= keypoints1[it->queryIdx].pt.y;
-				 points1.push_back(cv::Point2f(x,y));
+				 points1.push_back(keypoints1[it->queryIdx].pt);
 				 // Get the position of right keypoints
-				 x= keypoints2[it->trainIdx].pt.x;
-				 y= keypoints2[it->trainIdx].pt.y;
-				 points2.push_back(cv::Point2f(x,y));
+				 points2.push_back(keypoints2[it->trainIdx].pt);
 			}
 
 			// Compute 8-point F from all accepted matches
-			fundemental= cv::findFundamentalMat(
+			fundamental= cv::findFundamentalMat(
 				points1,points2, // matching points
 				CV_FM_8POINT); // 8-point method
 
@@ -261,7 +253,7 @@ class RobustMatcher {
 
 				std::vector<cv::Point2f> newPoints1, newPoints2;	
 				// refine the matches
-				correctMatches(fundemental,             // F matrix
+				correctMatches(fundamental,             // F matrix
 					           points1, points2,        // original position
 							   newPoints1, newPoints2); // new position
 				for (int i=0; i< points1.size(); i++) {
@@ -286,11 +278,11 @@ class RobustMatcher {
 		}
 
 
-		return fundemental;
+		return fundamental;
 	  }
 
 	  // Match feature points using RANSAC
-	  // returns fundemental matrix and output match set
+	  // returns fundamental matrix and output match set
 	  cv::Mat match(cv::Mat& image1, cv::Mat& image2, // input images 
 		  std::vector<cv::DMatch>& matches, // output matches and keypoints
 		  std::vector<cv::KeyPoint>& keypoints1, std::vector<cv::KeyPoint>& keypoints2,
@@ -367,15 +359,15 @@ class RobustMatcher {
 		}
 
 		// 4. Validate matches using RANSAC
-		cv::Mat fundemental= ransacTest(outputMatches, keypoints1, keypoints2, matches);
+		cv::Mat fundamental= ransacTest(outputMatches, keypoints1, keypoints2, matches);
 		std::cout << "Number of matched points (after RANSAC): " << matches.size() << std::endl;
 
-		// return the found fundemental matrix
-		return fundemental;
+		// return the found fundamental matrix
+		return fundamental;
 	}
 	  
 	 // Match feature points using RANSAC
-	 // returns fundemental matrix and output match set
+	 // returns fundamental matrix and output match set
      // this is the simpligied version presented in the book
 	  cv::Mat matchBook(cv::Mat& image1, cv::Mat& image2, // input images 
 		  std::vector<cv::DMatch>& matches, // output matches and keypoints
@@ -391,7 +383,7 @@ class RobustMatcher {
 		extractor->compute(image2,keypoints2,descriptors2);
 
 		// 3. Match the two image descriptors
-		//    (optionnaly apply some checking method)
+		//    (optionnally apply some checking method)
    
 		// Construction of the matcher with crosscheck 
 		cv::BFMatcher matcher(normType,   //distance measure
@@ -402,10 +394,10 @@ class RobustMatcher {
 		matcher.match(descriptors1,descriptors2,outputMatches);
 
 		// 4. Validate matches using RANSAC
-		cv::Mat fundemental= ransacTest(outputMatches, keypoints1, keypoints2, matches);
+		cv::Mat fundamental= ransacTest(outputMatches, keypoints1, keypoints2, matches);
 
 		// return the found fundemental matrix
-		return fundemental;
+		return fundamental;
 	}
 
 };
