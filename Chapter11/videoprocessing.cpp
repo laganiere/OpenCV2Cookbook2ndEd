@@ -46,7 +46,8 @@ void canny(cv::Mat& img, cv::Mat& out) {
 int main()
 {
 	// Open the video file
-    cv::VideoCapture capture("bike.avi");
+//	cv::VideoCapture capture("bike.avi");
+	cv::VideoCapture capture("http://www.site.uottawa.ca/~laganier/test.avi");
 	// check if video successfully opened
 	if (!capture.isOpened())
 		return 1;
@@ -118,4 +119,6 @@ int main()
 	processor.run();
 
 	cv::waitKey();	
+
+	return 0;
 }

@@ -36,7 +36,7 @@ void onMouse( int event, int x, int y, int flags, void* param)	{
 	}
 }
 
-void main() {
+int main() {
 
 	cv::Mat image; // create an empty image
 	std::cout << "This image is " << image.rows << " x " 
@@ -50,7 +50,7 @@ void main() {
 		// possibly display an error message
 		// and quit the application 
 		std::cout << "Error reading image..." << std::endl;
-		return;
+		return 0;
 	}
 
 	std::cout << "This image is " << image.rows << " x " 
@@ -100,6 +100,6 @@ void main() {
 
 	cv::waitKey(0); // 0 to indefinitely wait for a key pressed
 
-	return;
+	return 0;
 }
 
