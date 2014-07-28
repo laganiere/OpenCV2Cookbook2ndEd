@@ -46,8 +46,8 @@ void canny(cv::Mat& img, cv::Mat& out) {
 int main()
 {
 	// Open the video file
-//	cv::VideoCapture capture("bike.avi");
-	cv::VideoCapture capture("http://www.site.uottawa.ca/~laganier/test.avi");
+	cv::VideoCapture capture("bike.avi");
+//	cv::VideoCapture capture("http://www.laganiere.name/bike.avi");
 	// check if video successfully opened
 	if (!capture.isOpened())
 		return 1;
@@ -73,7 +73,7 @@ int main()
 		if (!capture.read(frame))
 			break;
 
-		cv::imshow("Extracted Frame",frame);
+		cv::imshow("Extra	cted Frame",frame);
 
 		std::string name(b);
 		name+=std::to_string(i++);
@@ -114,6 +114,9 @@ int main()
 
 	// output a video
 	processor.setOutput("bikeCanny.avi",-1,15);
+
+	// stop the process at this frame
+	processor.stopAtFrameNo(51);
 
 	// Start the process
 	processor.run();

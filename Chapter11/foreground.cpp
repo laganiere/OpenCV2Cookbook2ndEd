@@ -41,7 +41,6 @@ int main()
 	cv::Mat background;
 
 	cv::namedWindow("Extracted Foreground");
-	cv::namedWindow("Background Image");
 
 	// The Mixture of Gaussian object
 	// used with all default parameters
@@ -64,8 +63,6 @@ int main()
 
 		// show foreground and background
 		cv::imshow("Extracted Foreground",foreground);
-		// mog.getBackgroundImage(background);
-		// cv::imshow("Background Image", background);
 
 		// introduce a delay
 		// or press key to stop
