@@ -24,3 +24,8 @@ File:
 	addImages.cpp
 correspond to Recipes:
 Performing simple image arithmetic
+
+File:
+	remapping.cpp
+correspond to Recipes:
+Remapping an image

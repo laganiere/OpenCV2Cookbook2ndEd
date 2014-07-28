@@ -107,7 +107,7 @@ int main()
 	cv::namedWindow("Image");
 	cv::imshow("Image",result);
 
-	// open the image in gay-level
+    // open the image in gray-level
 	image= cv::imread("boldt.jpg",0);
 	// image is resize for book printing
 	cv::resize(image, image, cv::Size(), 0.6, 0.6);

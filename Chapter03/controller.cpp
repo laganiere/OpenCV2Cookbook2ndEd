@@ -20,7 +20,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <stdio.h>
-#include <windows.h>
 
 #include "colorDetectController.h"
 
@@ -33,9 +32,6 @@ int main()
 
 	// To display the result
 	cv::namedWindow("Image");
-	// this handle will allow us to force the image window to refresh
-	// (Windows only)
-	HWND hWnd= (HWND)cvGetWindowHandle("Image");
     
 	// The following code simulate a user Interface
 	// based on the use of a controller
@@ -91,12 +87,12 @@ int main()
 				break;
 			case 'i':  // show input image
 				cv::imshow("Image",controller.getInputImage()); 
-	            UpdateWindow(hWnd); // force the window to repaint
-				break;
+                cv::waitKey(10); // for window to repaint
+                break;
 			case 'r':  // run color detection
 				controller.process();
 				cv::imshow("Image",controller.getLastResult()); 
-	            UpdateWindow(hWnd); // force the window to repaint
+                cv::waitKey(10); // for window to repaint
 				break;
 		}	
 	}

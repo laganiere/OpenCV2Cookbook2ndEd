@@ -60,7 +60,8 @@ void colorReduce1(cv::Mat image, int div=64) {
 
             // process each pixel ---------------------
 
-                 *data++= *data/div*div + div/2;
+                 *data= *data/div*div + div/2;
+                 data++;
 
             // end of pixel processing ----------------
 
@@ -99,7 +100,7 @@ void colorReduce3(cv::Mat image, uchar div=64) {
 
       int nl= image.rows; // number of lines
       int nc= image.cols * image.channels(); // total number of elements per line
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
       uchar div2= div>>1;
@@ -128,7 +129,7 @@ void colorReduce4(cv::Mat image, int div=64) {
 
       int nl= image.rows; // number of lines
       int nc= image.cols * image.channels(); // total number of elements per line
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       int step= image.step; // effective width
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
@@ -158,7 +159,7 @@ void colorReduce4(cv::Mat image, int div=64) {
 void colorReduce5(cv::Mat image, int div=64) {
 
       int nl= image.rows; // number of lines
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
 
@@ -193,7 +194,7 @@ void colorReduce6(cv::Mat image, int div=64) {
           nl= 1;  // it is now a 1D array
        }
 
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
 
@@ -228,7 +229,7 @@ void colorReduce7(cv::Mat image, int div=64) {
       int nl= image.rows; // number of lines
       int nc= image.cols*image.channels() ; // number of columns
 
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
 
@@ -283,7 +284,7 @@ void colorReduce8b(cv::Mat image, int div=64) {
 
         // process each pixel ---------------------
 
-        *it= *it/div*div + offset;
+        *it= *it/div*div+offset;
         // end of pixel processing ----------------
       }
 }
@@ -293,7 +294,7 @@ void colorReduce8b(cv::Mat image, int div=64) {
 void colorReduce9(cv::Mat image, int div=64) {
 
       // div must be a power of 2
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
 
@@ -397,7 +398,7 @@ void colorReduce12(const cv::Mat &image, // input image
 // using overloaded operators
 void colorReduce13(cv::Mat image, int div=64) {
 
-      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0));
+      int n= static_cast<int>(log(static_cast<double>(div))/log(2.0) + 0.5);
       // mask used to round the pixel value
       uchar mask= 0xFF<<n; // e.g. for div=16, mask= 0xF0
 

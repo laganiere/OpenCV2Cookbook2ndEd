@@ -76,7 +76,7 @@ int main()
 {
 	// open the image
 	cv::Mat image= cv::imread("boldt.jpg",1);
-	// image is resize for book printing
+    // image is resized for book printing
 	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	// call function to add noise
@@ -93,7 +93,7 @@ int main()
 
 	// test second version
 	image= cv::imread("boldt.jpg",0);
-	// image is resize for book printing
+    // image is resized for book printing
 	cv::resize(image, image, cv::Size(), 0.6, 0.6);
 
 	salt2(image, 500);
