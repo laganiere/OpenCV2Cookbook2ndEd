@@ -30,7 +30,7 @@ cv::Mat function() {
    return ima;
 }
 
-void main() {
+int main() {
 
 	// define image windows
 	cv::namedWindow("Image 1"); 
@@ -104,6 +104,6 @@ void main() {
 	cv::imshow("Image", image2); // show the image
 	cv::waitKey(0); // wait for a key pressed
 
-	return;
+    return 0;
 }
 

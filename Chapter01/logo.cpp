@@ -21,7 +21,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-void main() {
+int main() {
 
 	// define an image window
 	cv::namedWindow("Image"); 
@@ -63,6 +63,6 @@ void main() {
 	cv::imshow("Image", image); // show the image
 	cv::waitKey(0); // wait for a key pressed
 
-	return;
+    return 0;
 }
 
