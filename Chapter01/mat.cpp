@@ -49,7 +49,7 @@ int main() {
 	cv::waitKey(0); // wait for a key pressed
 
 	// re-allocate a new image
-	// (only if size and type are different)
+    // (only if size or type are different)
 	image1.create(200,200,CV_8U);
 	image1= 200;
 

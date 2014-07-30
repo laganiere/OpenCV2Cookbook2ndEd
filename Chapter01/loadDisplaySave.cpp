@@ -45,8 +45,8 @@ int main() {
 	// read the input image as a gray-scale image
 	image=  cv::imread("puppy.bmp", CV_LOAD_IMAGE_GRAYSCALE); 
 
-	if (!image.data) {  // error handling
-		// no image has been created…
+    if (image.empty()) {  // error handling
+        // no image has been created...
 		// possibly display an error message
 		// and quit the application 
 		std::cout << "Error reading image..." << std::endl;
@@ -59,7 +59,7 @@ int main() {
               << image.channels() << " channel(s)" << std::endl; 
 
 	// create image window named "My Image"
-	cv::namedWindow("Original Image"); // define the window
+    cv::namedWindow("Original Image"); // define the window (optional)
 	cv::imshow("Original Image", image); // show the image
 
 	// set the mouse callback for this image

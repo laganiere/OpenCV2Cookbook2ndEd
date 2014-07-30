@@ -1,4 +1,5 @@
 # cmake for OpenCV2 Cookbook
+# your opencv/build directory should be in your system PATH
 
 # set minimum required version for cmake
 cmake_minimum_required(VERSION 2.8)

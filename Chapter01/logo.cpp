@@ -54,8 +54,8 @@ int main() {
     // imageROI= image(cv::Range(image.rows-logo.rows,image.rows), 
     //                 cv::Range(image.cols-logo.cols,image.cols));
 
-	// read the logo as a mask (must be gray-level)
-	cv::Mat mask= cv::imread("smalllogo.png",CV_LOAD_IMAGE_GRAYSCALE);
+    // use the logo as a mask (must be gray-level)
+    cv::Mat mask(logo);
 
 	// insert by copying only at locations of non-zero mask
 	logo.copyTo(imageROI,mask);
