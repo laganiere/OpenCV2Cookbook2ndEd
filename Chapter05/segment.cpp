@@ -30,7 +30,8 @@ int main()
 	if (!image.data)
 		return 0; 
 	// resize for book printing
-	cv::resize(image, image, cv::Size(), 0.7, 0.7);
+    cv::resize(image, image, cv::Size(), 0.7, 0.7);
+    std::cout << image.rows << "," << image.cols << std::endl;
 
     // Display the image
 	cv::namedWindow("Original Image");
@@ -72,17 +73,17 @@ int main()
 
 	// Set markers and process
 	segmenter.setMarkers(markers);
-	segmenter.process(image);
+    segmenter.process(image);
 
-	// Display segmentation result
+    // Display segmentation result
 	cv::namedWindow("Segmentation");
 	cv::imshow("Segmentation",segmenter.getSegmentation());
 
-	// Display watersheds
+    // Display watersheds
 	cv::namedWindow("Watersheds");
 	cv::imshow("Watersheds",segmenter.getWatersheds());
 
-	// Open another image
+    // Open another image
 	image= cv::imread("tower.jpg");
 	// resize for book printing
 	cv::resize(image, image, cv::Size(), 0.6, 0.6);

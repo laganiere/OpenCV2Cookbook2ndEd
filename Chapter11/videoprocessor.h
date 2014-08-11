@@ -94,6 +94,8 @@ class VideoProcessor {
 				  itImg++;
 				  return frame.data != 0;
 			  }
+
+              return false;
 		  }
 	  }
 

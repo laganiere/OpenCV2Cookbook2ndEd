@@ -45,7 +45,7 @@ int main()
 				  1500); // max acceptable area
 
 	// vector of point sets
-	std::vector<std::vector<cv::Point>> points;
+    std::vector<std::vector<cv::Point> > points;
 	// detect MSER features
 	mser(image, points);
 
@@ -59,7 +59,7 @@ int main()
 	cv::RNG rng;
 
 	// for each detected feature
-	for (std::vector<std::vector<cv::Point>>::iterator it= points.begin();
+    for (std::vector<std::vector<cv::Point> >::iterator it= points.begin();
 			   it!= points.end(); ++it) {
 
 		// generate a random color

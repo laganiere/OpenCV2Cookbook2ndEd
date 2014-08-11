@@ -19,3 +19,7 @@ File:
 	huesaturation.cpp
 correspond to Recipe:
 Representing colors with hue, saturation and brightness
+
+You need the images:
+boldt.jpg
+girl.jpg

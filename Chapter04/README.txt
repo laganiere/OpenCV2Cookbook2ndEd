@@ -6,14 +6,16 @@ by Robert Laganiere, Packt Publishing, 2013.
 Files:
 	histogram.h
 	histograms.cpp
-	colorhistogram.h
+        histogram.cpp
 correspond to Recipes:
 Computing the image histogram
 Applying Look-up Tables to Modify Image Appearance
 
 Files:
 	colorhistogram.h
+        histogram.h
 	contentfinder.h
+        histogram.cpp
 	contentfinder.cpp
 correspond to Recipe:
 Backprojecting a Histogram to Detect Specific Image Content
@@ -36,3 +38,6 @@ Files:
 	tracking.cpp
 correspond to Recipe:
 Counting pixels with integral images
+
+You need the images:
+boldt.jpg

@@ -76,7 +76,11 @@ int main()
 		cv::imshow("Extra	cted Frame",frame);
 
 		std::string name(b);
-		name+=std::to_string(i++);
+        // note: some MinGW compilers generate an error for this line
+        // this is a compiler bug
+        // try: std::ostringstream ss; ss << i; name+= ss.rdbuf(); i++;
+//		name+=std::to_string(i++);
+        std::ostringstream ss; ss << i; name+= ss.str(); i++;
 		name+=ext;
 
 		std::cout << name <<std::endl;

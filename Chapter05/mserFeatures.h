@@ -47,11 +47,11 @@ class MSERFeatures {
 	  void getBoundingRects(const cv::Mat &image, std::vector<cv::RotatedRect> &rects) {
 
 		  // detect MSER features
-		  std::vector<std::vector<cv::Point>> points;
+          std::vector<std::vector<cv::Point> > points;
 		  mser(image, points);
 
 		  // for each detected feature
-		  for (std::vector<std::vector<cv::Point>>::iterator it= points.begin();
+          for (std::vector<std::vector<cv::Point> >::iterator it= points.begin();
 			   it!= points.end(); ++it) {
 				   
 			  // Extract bouding rectangles

@@ -92,7 +92,7 @@ void CameraCalibrator::addPoints(const std::vector<cv::Point2f>& imageCorners, c
 
 // Calibrate the camera
 // returns the re-projection error
-double CameraCalibrator::calibrate(cv::Size &imageSize)
+double CameraCalibrator::calibrate(const cv::Size imageSize)
 {
 	// undistorter must be reinitialized
 	mustInitUndistort= true;

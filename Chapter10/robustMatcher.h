@@ -115,13 +115,13 @@ class RobustMatcher {
 	  // Clear matches for which NN ratio is > than threshold
 	  // return the number of removed points 
 	  // (corresponding entries being cleared, i.e. size will be 0)
-	  int ratioTest(const std::vector<std::vector<cv::DMatch>>& inputMatches,
+      int ratioTest(const std::vector<std::vector<cv::DMatch> >& inputMatches,
 		            std::vector<cv::DMatch>& outputMatches) {
 
 		int removed=0;
 
         // for all matches
-		for (std::vector<std::vector<cv::DMatch>>::const_iterator matchIterator= inputMatches.begin();
+        for (std::vector<std::vector<cv::DMatch> >::const_iterator matchIterator= inputMatches.begin();
 			 matchIterator!= inputMatches.end(); ++matchIterator) {
 				 
 				 //   first best match/second best match
@@ -167,8 +167,8 @@ class RobustMatcher {
 
 	  // Apply both ratio and symmetry test
 	  // (often an over-kill)
-	  void ratioAndSymmetryTest(const std::vector<std::vector<cv::DMatch>>& matches1,
-		                        const std::vector<std::vector<cv::DMatch>>& matches2,
+      void ratioAndSymmetryTest(const std::vector<std::vector<cv::DMatch> >& matches1,
+                                const std::vector<std::vector<cv::DMatch> >& matches2,
 					            std::vector<cv::DMatch>& outputMatches) {
 
 		// Remove matches for which NN ratio is > than threshold
@@ -310,8 +310,8 @@ class RobustMatcher {
 	                          check==CROSSCHECK);  // crosscheck flag
                              
 		// vectors of matches
-		std::vector<std::vector<cv::DMatch>> matches1;
-		std::vector<std::vector<cv::DMatch>> matches2;
+        std::vector<std::vector<cv::DMatch> > matches1;
+        std::vector<std::vector<cv::DMatch> > matches2;
 	    std::vector<cv::DMatch> outputMatches;
 
 		// call knnMatch if ratio check is required

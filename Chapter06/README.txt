@@ -15,3 +15,7 @@ Files:
 correspond to Recipes:
 Applying Directional Filters to Detect Edges
 Computing the Laplacian of an Image
+
+You need the images:
+boldt.jpg
+salted.bmp

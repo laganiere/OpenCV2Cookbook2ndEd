@@ -21,3 +21,6 @@ Files:
 	foreground.cpp
 correspond to Recipe:
 Extracting the Foreground Objects in Video
+
+You need the image sequence:
+bike.avi

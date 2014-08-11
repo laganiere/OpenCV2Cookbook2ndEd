@@ -31,9 +31,9 @@ class CameraCalibrator {
 
     // input points:
     // the points in world coordinates
-    std::vector<std::vector<cv::Point3f>> objectPoints;
+    std::vector<std::vector<cv::Point3f> > objectPoints;
     // the point positions in pixels
-	std::vector<std::vector<cv::Point2f>> imagePoints;
+    std::vector<std::vector<cv::Point2f> > imagePoints;
     // output Matrices
     cv::Mat cameraMatrix;
     cv::Mat distCoeffs;
@@ -44,18 +44,18 @@ class CameraCalibrator {
 	bool mustInitUndistort;
 
   public:
-	CameraCalibrator() : flag(0), mustInitUndistort(true) {};
+    CameraCalibrator() : flag(0), mustInitUndistort(true) {}
 
 	// Open the chessboard images and extract corner points
 	int addChessboardPoints(const std::vector<std::string>& filelist, cv::Size & boardSize, std::string windowName="");
 	// Add scene points and corresponding image points
     void addPoints(const std::vector<cv::Point2f>& imageCorners, const std::vector<cv::Point3f>& objectCorners);
 	// Calibrate the camera
-	double calibrate(cv::Size &imageSize);
+    double calibrate(const cv::Size imageSize);
     // Set the calibration flag
     void setCalibrationFlag(bool radial8CoeffEnabled=false, bool tangentialParamEnabled=false);
 	// Remove distortion in an image (after calibration)
-	cv::Mat CameraCalibrator::remap(const cv::Mat &image);
+    cv::Mat remap(const cv::Mat &image);
 
     // Getters
     cv::Mat getCameraMatrix() { return cameraMatrix; }

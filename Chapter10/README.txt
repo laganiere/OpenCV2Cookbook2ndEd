@@ -21,3 +21,14 @@ File:
 	estimateH.cpp
 correspond to Recipe:
 Computing a homography between two images
+
+You need the images:
+
+chessboards/*
+church01.jpg
+church02.jpg
+church03.jpg
+parliament1.jpg
+parliament2.jpg
+
+

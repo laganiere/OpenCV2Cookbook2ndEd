@@ -33,7 +33,7 @@ int main()
 	cv::imshow("Binary Image",image);
 
 	// Get the contours of the connected components
-	std::vector<std::vector<cv::Point>> contours;
+    std::vector<std::vector<cv::Point> > contours;
 	cv::findContours(image, 
 		contours, // a vector of contours 
 		CV_RETR_EXTERNAL, // retrieve the external contours
@@ -41,7 +41,7 @@ int main()
 
 	// Print contours' length
 	std::cout << "Contours: " << contours.size() << std::endl;
-	std::vector<std::vector<cv::Point>>::const_iterator itContours= contours.begin();
+    std::vector<std::vector<cv::Point> >::const_iterator itContours= contours.begin();
 	for ( ; itContours!=contours.end(); ++itContours) {
 
 		std::cout << "Size: " << itContours->size() << std::endl;
@@ -60,7 +60,7 @@ int main()
 	// Eliminate too short or too long contours
 	int cmin= 50;  // minimum contour length
 	int cmax= 1000; // maximum contour length
-	std::vector<std::vector<cv::Point>>::const_iterator itc= contours.begin();
+    std::vector<std::vector<cv::Point> >::iterator itc= contours.begin();
 	while (itc!=contours.end()) {
 
 		if (itc->size() < cmin || itc->size() > cmax)
@@ -101,7 +101,7 @@ int main()
 	cv::Point2f center;
 	cv::minEnclosingCircle(contours[1],center,radius);
 	// draw the cricle
-	cv::circle(result,cv::Point(center),static_cast<int>(radius), 0, 2);
+    cv::circle(result,center,static_cast<int>(radius), 0, 2);
 
 	// testing the approximate polygon
 	std::vector<cv::Point> poly;
@@ -182,7 +182,7 @@ int main()
 	cv::Mat quadri(components.size(),CV_8U,255);
 
 	// for all contours
-	std::vector<std::vector<cv::Point>>::iterator it= contours.begin();
+    std::vector<std::vector<cv::Point> >::iterator it= contours.begin();
 	while (it!= contours.end()) {
 		poly.clear();
 		// approximate contour by polygon

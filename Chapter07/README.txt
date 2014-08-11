@@ -19,3 +19,10 @@ File:
 correspond to Recipes:
 Extracting the Components’ Contours
 Computing Components’ Shape Descriptors
+
+You need the images:
+group.jpg
+binaryGroup.bmp
+mser.bmp
+road.jpg
+chariot.jpg
