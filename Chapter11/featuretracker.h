@@ -70,31 +70,31 @@ class FeatureTracker : public FrameProcessor {
 		// 2. track features
 		cv::calcOpticalFlowPyrLK(gray_prev, gray, // 2 consecutive images
 			points[0], // input point position in first image
-			points[1], // output point postion in the second image
-			status,    // tracking success
-			err);      // tracking error
-           
-		// 2. loop over the tracked points to reject the undesirables
-		int k=0;
-		for( int i= 0; i < points[1].size(); i++ ) {
+            points[1], // output point postion in the second image
+                status,    // tracking success
+                err);      // tracking error
 
-			// do we keep this point?
-			if (acceptTrackedPoint(i)) {
+            // 3. loop over the tracked points to reject the undesirables
+            int k=0;
+            for( int i= 0; i < points[1].size(); i++ ) {
 
-				// keep this point in vector
-				initial[k]= initial[i];
-				points[1][k++] = points[1][i];
-			}
-		}
+                // do we keep this point?
+                if (acceptTrackedPoint(i)) {
+
+                    // keep this point in vector
+                    initial[k]= initial[i];
+                    points[1][k++] = points[1][i];
+                }
+            }
 
 		// eliminate unsuccesful points
         points[1].resize(k);
 		initial.resize(k);
 
-		// 3. handle the accepted tracked points
+        // 4. handle the accepted tracked points
 		handleTrackedPoints(frame, output);
 
-		// 4. current points and image become previous ones
+        // 5. current points and image become previous ones
 		std::swap(points[1], points[0]);
         cv::swap(gray_prev, gray);
 	}

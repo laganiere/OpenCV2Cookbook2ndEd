@@ -422,7 +422,7 @@ void colorReduce14(cv::Mat image, int div=64) {
 
 
 #define NTESTS 16
-#define NITERATIONS 1
+#define NITERATIONS 10
 
 int main()
 {

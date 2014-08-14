@@ -14,3 +14,7 @@ Detecting features very fast
 Detecting Scale-Invariant Features
 Detecting fast features at multiple scales
 
+You need the images:
+church01.jpg
+church02.jpg
+church03.jpg
