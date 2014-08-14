@@ -90,7 +90,7 @@ int main()
 
 	// radius match
 	float maxDist= 0.4;
-    std::vector<std::vector<cv::DMatch>> matches2;
+    std::vector<std::vector<cv::DMatch> > matches2;
 	matcher.radiusMatch(descriptors1, descriptors2, matches2, 
 		                maxDist); // maximum acceptable distance
 	                              // between the 2 descriptors
@@ -119,7 +119,7 @@ int main()
 
 	// perform ratio test
 	double ratio= 0.85;
-	std::vector<std::vector<cv::DMatch>>::iterator it;
+    std::vector<std::vector<cv::DMatch> >::iterator it;
 	for (it= matches2.begin(); it!= matches2.end(); ++it) {
 
 		//   first best match/second best match
