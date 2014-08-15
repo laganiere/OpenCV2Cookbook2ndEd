@@ -42,20 +42,20 @@ class IntegralImage {
 	  cv::Vec<T,N> operator()(int xo, int yo, int width, int height) {
 
 		  // window at (xo,yo) of size width by height
-		  return (integralImage.at<cv::Vec<T,N>>(yo+height,xo+width)
-			      -integralImage.at<cv::Vec<T,N>>(yo+height,xo)
-			      -integralImage.at<cv::Vec<T,N>>(yo,xo+width)
-			      +integralImage.at<cv::Vec<T,N>>(yo,xo));
+          return (integralImage.at<cv::Vec<T,N> >(yo+height,xo+width)
+                  -integralImage.at<cv::Vec<T,N> >(yo+height,xo)
+                  -integralImage.at<cv::Vec<T,N> >(yo,xo+width)
+                  +integralImage.at<cv::Vec<T,N> >(yo,xo));
 	  }
 
 	  // compute sum over sub-regions of any size from 4 pixel access
 	  cv::Vec<T,N> operator()(int x, int y, int radius) {
 
 		  // square window centered at (x,y) of size 2*radius+1
-		  return (integralImage.at<cv::Vec<T,N>>(y+radius+1,x+radius+1)
-			      -integralImage.at<cv::Vec<T,N>>(y+radius+1,x-radius)
-			      -integralImage.at<cv::Vec<T,N>>(y-radius,x+radius+1)
-			      +integralImage.at<cv::Vec<T,N>>(y-radius,x-radius));
+          return (integralImage.at<cv::Vec<T,N> >(y+radius+1,x+radius+1)
+                  -integralImage.at<cv::Vec<T,N> >(y+radius+1,x-radius)
+                  -integralImage.at<cv::Vec<T,N> >(y-radius,x+radius+1)
+                  +integralImage.at<cv::Vec<T,N> >(y-radius,x-radius));
 	  }
 };
 

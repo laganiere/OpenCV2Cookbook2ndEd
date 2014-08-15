@@ -19,13 +19,17 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # add executable
 add_executable( histograms histograms.cpp)
-add_executable( contentfinder contentfinder.cpp histogram.cpp)
+add_executable( contentfinder contentfinder.cpp)
+add_executable( finder finder.cpp)
 add_executable( retrieve retrieve.cpp)
+add_executable( integral integral.cpp)
 add_executable( tracking tracking.cpp)
 
 # link libraries
 target_link_libraries( histograms ${OpenCV_LIBS})
 target_link_libraries( contentfinder ${OpenCV_LIBS})
+target_link_libraries( finder ${OpenCV_LIBS})
 target_link_libraries( retrieve ${OpenCV_LIBS})
+target_link_libraries( integral ${OpenCV_LIBS})
 target_link_libraries( tracking ${OpenCV_LIBS})
 

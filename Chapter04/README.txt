@@ -6,7 +6,6 @@ by Robert Laganiere, Packt Publishing, 2013.
 Files:
 	histogram.h
 	histograms.cpp
-        histogram.cpp
 correspond to Recipes:
 Computing the image histogram
 Applying Look-up Tables to Modify Image Appearance
@@ -15,7 +14,6 @@ Files:
 	colorhistogram.h
         histogram.h
 	contentfinder.h
-        histogram.cpp
 	contentfinder.cpp
 correspond to Recipe:
 Backprojecting a Histogram to Detect Specific Image Content
@@ -40,4 +38,18 @@ correspond to Recipe:
 Counting pixels with integral images
 
 You need the images:
-boldt.jpg
+group.jpg
+waves.jpg
+waves2.jpg
+dog.jpg
+baboon1.jpg
+baboon3.jpg
+beach.jpg
+marais.jpg
+fundy.jpg
+moose.jpg
+bear.jpg
+polar.jpg
+lake.jpg
+bike55.bmp
+bike65.bmp
